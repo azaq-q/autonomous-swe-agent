@@ -2,7 +2,7 @@
 
 > 本文档记录项目当前实现进度，随开发持续更新。
 >
-> 关联文档：[产品设计](./autonomous-swe-agent.md) · [实现路线对比](./implementation-routes.md) · [简历项目实现指南](./resume-project-guide.md)
+> 关联文档：[产品设计](./autonomous-swe-agent.md) · [实现路线对比](./implementation-routes.md) · [简历项目实现指南](./resume-project-guide.md) · [本地环境安装与运行步骤](./local-setup.md)
 
 ## 1. 项目概述
 
@@ -18,8 +18,8 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | 数据库 | 默认 SQLite（无 Docker 可跑）；生产 PostgreSQL（pgvector） |
 | 缓存/队列 | Redis |
 | 前端 | Next.js 14 + TypeScript + TailwindCSS |
-| 沙箱 | 本地 subprocess（E2B 接入预留） |
-| LLM | OpenAI / Claude 多模型路由 |
+| 沙箱 | 本地 subprocess / Docker / E2B（可切换） |
+| LLM | OpenAI 兼容（含 DeepSeek）/ Claude 多模型路由 |
 
 ---
 
@@ -35,6 +35,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | P3 检索与评测 | ✅ 完成 | `9a7b101` |
 | P4 前端完整化 | ✅ 完成 | `006c3fb` |
 | P5 任务持久化与异步执行 | ✅ 完成 | `bdcfcc7` |
+| P6 多沙箱与多模型接入 | ✅ 完成 | `42c5b59` |
 
 单元测试：**26 passed**（后端）。
 
@@ -54,19 +55,21 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | 模块 | 文件 | 说明 |
 | --- | --- | --- |
 | 配置 | `core/config.py` | pydantic-settings 配置（数据库/Redis/LLM/沙箱/workdir） |
-| LLM | `core/llm.py` | 多模型工厂（OpenAI / Anthropic） |
-| 应用入口 | `main.py` | FastAPI 工厂，注册 health + tasks 路由，启动时建表（init_db） |
+| LLM | `core/llm.py` | 多模型工厂（OpenAI 兼容含 DeepSeek / Anthropic） |
+| 应用入口 | `main.py` | FastAPI 工厂，注册路由 + CORS + 启动建表（init_db） |
 | 任务 API | `api/routes/tasks.py` | 任务创建/列表/查询（数据库持久化 + 后台执行） |
 | 任务执行器 | `services/executor.py` | 后台执行任务：无 LLM key 走 mock，有则走编排 |
 | 健康检查 | `api/routes/health.py` | `GET /health` |
 
-### 3.3 沙箱与工具（P1）
+### 3.3 沙箱与工具（P1 / P6）
 
 | 模块 | 文件 | 说明 |
 | --- | --- | --- |
 | 沙箱抽象 | `sandbox/base.py` | `CommandResult` + `Sandbox` 协议 |
 | 本地沙箱 | `sandbox/local.py` | subprocess 实现（命令执行 + 文件读写 + 目录列举） |
-| 沙箱工厂 | `sandbox/__init__.py` | 单例工厂，E2B 接入预留 |
+| Docker 沙箱 | `sandbox/docker.py` | 容器内执行命令，宿主目录挂载 |
+| E2B 沙箱 | `sandbox/e2b.py` | 云端隔离沙箱（需 API Key） |
+| 沙箱工厂 | `sandbox/__init__.py` | 按 `SANDBOX_PROVIDER` 分发（local/docker/e2b） |
 | 文件工具 | `tools/file.py` | read_file / write_file / list_files |
 | 终端工具 | `tools/terminal.py` | run_command（受限命令执行） |
 | Git 工具 | `tools/git.py` | git_status / git_diff / git_commit |
@@ -119,7 +122,6 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 
 | 项 | 说明 | 优先级 |
 | --- | --- | --- |
-| E2B 沙箱接入 | 当前用本地 subprocess，生产需 Docker/E2B 隔离 | 高 |
 | pgvector 向量检索 | 检索目前仅 BM25，向量检索 + 混合重排待接入 | 高 |
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
 | 流式响应（SSE） | Chat 页面流式输出预留，未对接 Agent | 中 |
@@ -132,7 +134,9 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 
 ## 5. 当前可运行能力
 
-默认使用 SQLite + 本地沙箱，**无需 Docker** 即可跑通。配置 LLM API Key 后走真实多 Agent 编排，否则走 mock 模式。
+默认使用 SQLite + 本地沙箱，**无需 Docker** 即可跑通。配置 LLM API Key 后走真实多 Agent 编排（支持 OpenAI / DeepSeek / Claude），否则走 mock 模式；沙箱可切换 Docker / E2B。
+
+> 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
 # 1. 后端（26 测试已通过，首次启动自动建表）
@@ -161,8 +165,7 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 接入 E2B 沙箱与 pgvector 向量检索，完善混合检索
+1. 接入 pgvector 向量检索，完善混合检索
 2. 接入 Celery 分布式队列（替换当前线程执行器）
-3. 配置 LLM API Key 走真实多 Agent 编排（当前无 key 走 mock）
-4. 构建评测集，产出量化解决率报告
-5. 前端流式响应与人工审批交互
+3. 构建评测集，产出量化解决率报告
+4. 前端流式响应与人工审批交互
