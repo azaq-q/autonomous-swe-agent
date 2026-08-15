@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     default_model: str = "gpt-4o"
 
+    workdir: str = "./workspace"  # 本地沙箱工作目录
     sandbox_provider: str = "e2b"  # e2b | docker
     e2b_api_key: str | None = None
 
