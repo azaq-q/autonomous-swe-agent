@@ -21,11 +21,15 @@ def get_llm(settings: Settings | None = None) -> BaseChatModel:
             temperature=0,
         )
     if settings.openai_api_key:
-        return ChatOpenAI(
-            model=settings.default_model,
-            api_key=settings.openai_api_key,
-            temperature=0,
-        )
+        kwargs: dict = {
+            "model": settings.default_model,
+            "api_key": settings.openai_api_key,
+            "temperature": 0,
+        }
+        # 支持 OpenAI 兼容服务（DeepSeek 等）
+        if settings.openai_base_url:
+            kwargs["openai_api_base"] = settings.openai_base_url
+        return ChatOpenAI(**kwargs)
 
     raise RuntimeError(
         "未配置 LLM API Key，请在 backend/.env 中设置 OPENAI_API_KEY 或 ANTHROPIC_API_KEY"

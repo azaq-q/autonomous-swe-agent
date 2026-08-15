@@ -21,12 +21,16 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
 
     openai_api_key: str | None = None
+    # OpenAI 兼容接口地址（如 DeepSeek: https://api.deepseek.com/v1；留空用官方 OpenAI）
+    openai_base_url: str | None = None
     anthropic_api_key: str | None = None
     default_model: str = "gpt-4o"
 
     workdir: str = "./workspace"  # 本地沙箱工作目录
-    sandbox_provider: str = "local"  # local | e2b | docker
+    sandbox_provider: str = "local"  # local | docker | e2b
     e2b_api_key: str | None = None
+    e2b_template: str = "base"  # E2B 沙箱模板
+    docker_image: str = "python:3.12-slim"  # Docker 沙箱镜像
 
 
 @lru_cache
