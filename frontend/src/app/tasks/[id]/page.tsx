@@ -17,7 +17,24 @@ export default function TaskTimeline() {
   const [task, setTask] = useState<Task | null>(null);
 
   useEffect(() => {
-    getTask(params.id as string).then(setTask);
+    let stopped = false;
+    let timer: ReturnType<typeof setInterval>;
+
+    async function poll() {
+      const t = await getTask(params.id as string);
+      if (stopped) return;
+      setTask(t);
+      if (t && (t.status === "done" || t.status === "failed")) {
+        clearInterval(timer);
+      }
+    }
+
+    poll();
+    timer = setInterval(poll, 1000);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
   }, [params.id]);
 
   if (!task) {

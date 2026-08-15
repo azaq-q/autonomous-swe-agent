@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { createTask, listTasks, type Task } from "@/lib/api";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [prompt, setPrompt] = useState("");
 
@@ -19,6 +21,7 @@ export default function Dashboard() {
     const task = await createTask(prompt.trim());
     setTasks((prev) => [task, ...prev]);
     setPrompt("");
+    router.push(`/tasks/${task.task_id}`);
   }
 
   return (
