@@ -27,6 +27,13 @@ def test_list_files_tool(monkeypatch, tmp_path):
     assert "a.txt" in result
 
 
+def test_file_tools_return_recoverable_error_for_path_escape(monkeypatch, tmp_path):
+    _setup_sandbox(monkeypatch, tmp_path)
+    result = list_files.invoke({"path": str(tmp_path.parent)})
+    assert "操作被拒绝" in result
+    assert "相对路径" in result
+
+
 def test_run_command_tool(monkeypatch, tmp_path):
     _setup_sandbox(monkeypatch, tmp_path)
     result = run_command.invoke({"command": "echo hi"})
