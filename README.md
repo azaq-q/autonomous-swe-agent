@@ -12,6 +12,7 @@
 `1c19636de28259004f96786fe9df16fab019809f`。Agent 在一次迭代中修复浮点除法错误，
 标准库回归测试 `2/2` 通过，结构化 Review 判定 `approve`，并生成 349-byte binary patch
 （SHA-256 `e83fa7d9100515af8cdbbe639d1ad7d461a2237d2b62fcafd87c7fc0d89b425b`）。
+同一修复已发布为[公开 Draft PR #2](https://github.com/azaq-q/swe-agent-demo/pull/2)。
 
 ![任务 Dashboard](docs/assets/dashboard.png)
 
