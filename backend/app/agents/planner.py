@@ -6,6 +6,7 @@ import re
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.core.llm import get_llm
+from app.core.usage import extract_usage
 
 PLANNER_PROMPT = """你是一个任务规划器。请将用户的任务拆解为清晰的执行步骤。
 
@@ -21,6 +22,7 @@ PLANNER_PROMPT = """你是一个任务规划器。请将用户的任务拆解为
 class PlannerAgent:
     def __init__(self, llm: BaseChatModel | None = None) -> None:
         self.llm = llm or get_llm()
+        self.last_usage = {"input_tokens": 0, "output_tokens": 0}
 
     def plan(self, task: str) -> list[str]:
         messages = [
@@ -28,6 +30,7 @@ class PlannerAgent:
             ("user", task),
         ]
         resp = self.llm.invoke(messages)
+        self.last_usage = extract_usage(resp)
         return self._parse(resp.content)
 
     @staticmethod

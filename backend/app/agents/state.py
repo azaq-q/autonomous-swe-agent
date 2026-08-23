@@ -14,6 +14,8 @@ TRANSITIONS: dict[TaskStatus, set[TaskStatus]] = {
     TaskStatus.AWAITING_APPROVAL: {TaskStatus.DONE, TaskStatus.CODING},
     TaskStatus.DONE: set(),
     TaskStatus.FAILED: set(),
+    TaskStatus.CANCELLED: set(),
+    TaskStatus.PUBLISHING: {TaskStatus.DONE, TaskStatus.FAILED},
 }
 
 
@@ -26,8 +28,13 @@ class AgentState(TypedDict):
     """编排工作流的共享状态。"""
 
     task: str
+    test_command: str
+    iteration: int
+    max_iterations: int
     status: str
     plan: list[str]
     messages: list
     test_result: str
-    review: str
+    test_exit_code: int | None
+    review: dict
+    error: str

@@ -35,7 +35,7 @@ def test_run_command_tool(monkeypatch, tmp_path):
 
 def test_git_status_tool(monkeypatch, tmp_path):
     sb = _setup_sandbox(monkeypatch, tmp_path)
-    sb.run("git init")
+    sb.run("git init -q")
     sb.write_file("a.txt", "a")
     result = git_status.invoke({})
     assert "a.txt" in result
@@ -43,7 +43,9 @@ def test_git_status_tool(monkeypatch, tmp_path):
 
 def test_git_diff_tool(monkeypatch, tmp_path):
     sb = _setup_sandbox(monkeypatch, tmp_path)
-    sb.run("git init")
+    sb.run("git init -q")
+    sb.run('git config user.email "agent@example.com"')
+    sb.run('git config user.name "SWE Agent"')
     sb.write_file("a.txt", "a")
     sb.run("git add -A")
     sb.run('git commit -m "init"')

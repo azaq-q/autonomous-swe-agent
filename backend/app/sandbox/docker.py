@@ -1,6 +1,7 @@
 """Docker 容器沙箱实现（需要本机 Docker 守护进程运行）。"""
 
-from pathlib import Path
+import shlex
+from pathlib import Path, PurePosixPath
 
 from app.sandbox.base import CommandResult
 
@@ -26,6 +27,14 @@ class DockerSandbox:
             image,
             command="sleep infinity",
             detach=True,
+            network_disabled=True,
+            mem_limit="1g",
+            nano_cpus=1_000_000_000,
+            pids_limit=256,
+            cap_drop=["ALL"],
+            security_opt=["no-new-privileges:true"],
+            read_only=True,
+            tmpfs={"/tmp": "rw,noexec,nosuid,size=256m"},
             working_dir=self.container_workdir,
             volumes={
                 str(self.host_workdir): {"bind": self.container_workdir, "mode": "rw"}
@@ -33,8 +42,12 @@ class DockerSandbox:
         )
 
     def run(self, command: str, cwd: str | None = None, timeout: int = 60) -> CommandResult:
-        cmd = f"cd {cwd} && {command}" if cwd else command
-        exit_code, output = self.container.exec_run(cmd, demux=True)
+        target = self._container_cwd(cwd)
+        script = (
+            f"cd {shlex.quote(target)} && "
+            f"timeout --signal=KILL {max(1, timeout)}s sh -lc {shlex.quote(command)}"
+        )
+        exit_code, output = self.container.exec_run(["sh", "-lc", script], demux=True)
         stdout, stderr = output
         return CommandResult(
             exit_code=exit_code,
@@ -65,7 +78,16 @@ class DockerSandbox:
         p = Path(path)
         if not p.is_absolute():
             p = self.host_workdir / p
-        return p.resolve()
+        resolved = p.resolve()
+        if not resolved.is_relative_to(self.host_workdir):
+            raise ValueError(f"路径越过沙箱工作目录：{path}")
+        return resolved
+
+    def _container_cwd(self, cwd: str | None) -> str:
+        relative = PurePosixPath(cwd or ".")
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"容器工作目录非法：{cwd}")
+        return str(PurePosixPath(self.container_workdir) / relative)
 
     def close(self) -> None:
         """删除容器，释放资源。"""

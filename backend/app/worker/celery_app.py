@@ -18,4 +18,8 @@ celery_app.conf.update(
     accept_content=["json"],
     timezone="Asia/Shanghai",
     enable_utc=True,
+    imports=("app.worker.tasks",),
+    task_track_started=True,
+    worker_prefetch_multiplier=1,
+    task_acks_on_failure_or_timeout=True,
 )

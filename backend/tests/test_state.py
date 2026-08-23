@@ -1,7 +1,5 @@
 """任务状态机单元测试。"""
 
-import pytest
-
 from app.agents.state import can_transition
 from app.models.task import TaskStatus
 

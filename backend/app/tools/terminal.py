@@ -8,6 +8,8 @@ from app.sandbox import get_sandbox
 @tool
 def run_command(command: str) -> str:
     """执行 shell 命令（如运行测试、安装依赖），返回 stdout 与 stderr。"""
+    if len(command) > 20_000:
+        raise ValueError("命令长度超过 20000 字符限制")
     result = get_sandbox().run(command)
     out = result.stdout
     if result.stderr:

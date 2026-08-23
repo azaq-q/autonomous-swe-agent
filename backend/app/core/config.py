@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # postgresql+psycopg://swe:swe@localhost:5432/swe_agent
     database_url: str = "sqlite:///./swe_agent.db"
     redis_url: str = "redis://localhost:6379/0"
+    task_backend: str = "thread"  # thread | celery
+    worker_max_retries: int = 3
+    max_human_revisions: int = 3
 
     openai_api_key: str | None = None
     # OpenAI 兼容接口地址（如 DeepSeek: https://api.deepseek.com/v1；留空用官方 OpenAI）
@@ -26,7 +29,17 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     default_model: str = "gpt-4o"
 
+    github_token: str | None = None
+    github_api_url: str = "https://api.github.com"
+    git_author_name: str = "Autonomous SWE Agent"
+    git_author_email: str = "agent@example.invalid"
+    model_input_cost_per_million: float = 0.0
+    model_output_cost_per_million: float = 0.0
+
     workdir: str = "./workspace"  # 本地沙箱工作目录
+    artifact_dir: str = "./artifacts"
+    repository_allowed_hosts: str = "github.com"
+    allow_local_repositories: bool = True
     sandbox_provider: str = "local"  # local | docker | e2b
     e2b_api_key: str | None = None
     e2b_template: str = "base"  # E2B 沙箱模板

@@ -25,6 +25,8 @@ class LocalSandbox:
                 cwd=str(target),
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=timeout,
             )
             return CommandResult(proc.returncode, proc.stdout, proc.stderr)
@@ -52,4 +54,7 @@ class LocalSandbox:
         p = Path(path)
         if not p.is_absolute():
             p = self.workdir / p
-        return p.resolve()
+        resolved = p.resolve()
+        if not resolved.is_relative_to(self.workdir):
+            raise ValueError(f"路径越过沙箱工作目录：{path}")
+        return resolved
