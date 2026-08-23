@@ -6,6 +6,17 @@
 > 当前重点是可靠编排与安全执行。GitHub Clone/Push/Draft PR、混合检索和可复现评测框架
 > 已实现；真实任务数据集与付费模型成绩尚未产出，不将 mock 或示例结果冒充实测成绩。
 
+## 真实演示
+
+[公开演示 Issue #1](https://github.com/azaq-q/swe-agent-demo/issues/1) 固定在提交
+`1c19636de28259004f96786fe9df16fab019809f`。Agent 在一次迭代中修复浮点除法错误，
+标准库回归测试 `2/2` 通过，结构化 Review 判定 `approve`，并生成 349-byte binary patch
+（SHA-256 `e83fa7d9100515af8cdbbe639d1ad7d461a2237d2b62fcafd87c7fc0d89b425b`）。
+
+![任务 Dashboard](docs/assets/dashboard.png)
+
+![真实任务执行轨迹](docs/assets/task-run.png)
+
 ## 已实现
 
 - FastAPI + SQLAlchemy 任务 API，支持仓库元数据、测试命令和最大迭代次数
@@ -62,7 +73,8 @@ Review 与人工审批分别持久化，发布操作可重试且不会重复创�
 | 质量 | Ruff、65 passed / 1 skipped、Alembic 全量迁移、前端生产构建 |
 | 部署 | 非 root 前后端镜像、PostgreSQL/Redis/Worker 演示 Compose |
 
-真实模型效果与线上 PR 案例见后续 Benchmark 报告；当前仓库不使用 mock 数字作为项目成绩。
+当前公开案例用于验证工程闭环，不等同于统计意义上的模型成绩。解决率、稳定性和成本结论将在
+20+ 固定提交任务的 Benchmark 完成后发布；当前仓库不使用 mock 数字作为项目成绩。
 
 ## 本地运行
 
