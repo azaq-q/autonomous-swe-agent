@@ -35,3 +35,4 @@ Thumbs.db
 *.db
 *.db-journal
 backend/workspace/
+backend/artifacts/

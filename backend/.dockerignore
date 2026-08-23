@@ -1,0 +1,8 @@
+.venv
+.pytest_cache
+.ruff_cache
+workspace
+artifacts
+*.db
+tests
+evals

@@ -6,7 +6,7 @@
 
 ## 1. 项目概述
 
-Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台。用户输入自然语言开发任务，Agent 自动完成代码分析、定位问题、修改代码、执行测试并创建 PR。
+Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型。当前可完成独立仓库克隆、代码分析与修改、测试/Review 返工、人工审批，并在审批后生成提交和 GitHub Draft PR。
 
 **技术选型（已确认）：**
 
@@ -25,7 +25,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 
 ## 2. 总体进度
 
-核心闭环（P1-P5）已全部实现，各阶段均通过单元测试并提交 git。项目已端到端跑通：SQLite 自动建表 + 本地沙箱 + 任务后台执行 + 前端轮询。
+核心闭环（P1-P6）已实现，并完成可靠性与安全加固：真实仓库独立工作区、固定基础提交、工作分支、patch 产物、有限重试、测试日志反馈、人工审批、数据库迁移和 CI。
 
 | 阶段 | 状态 | 提交 |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | P5 任务持久化与异步执行 | ✅ 完成 | `bdcfcc7` |
 | P6 多沙箱与多模型接入 | ✅ 完成 | `42c5b59` |
 
-单元测试：**26 passed**（后端）。
+单元测试：**64 passed, 1 skipped**（后端；Windows 无符号链接权限时跳过对应安全用例）；覆盖 API 生命周期、checkpoint 恢复、发布幂等、AST/混合检索、路径与符号链接逃逸，Ruff 与前端生产构建纳入 CI。
 
 ---
 
@@ -57,7 +57,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | 配置 | `core/config.py` | pydantic-settings 配置（数据库/Redis/LLM/沙箱/workdir） |
 | LLM | `core/llm.py` | 多模型工厂（OpenAI 兼容含 DeepSeek / Anthropic） |
 | 应用入口 | `main.py` | FastAPI 工厂，注册路由 + CORS + 启动建表（init_db） |
-| 任务 API | `api/routes/tasks.py` | 任务创建/列表/查询（数据库持久化 + 后台执行） |
+| 任务 API | `api/routes/tasks.py` | 任务创建/列表/查询/审批/patch 下载，支持仓库、分支、测试命令和重试预算 |
 | 任务执行器 | `services/executor.py` | 后台执行任务：无 LLM key 走 mock，有则走编排 |
 | 健康检查 | `api/routes/health.py` | `GET /health` |
 
@@ -67,7 +67,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | --- | --- | --- |
 | 沙箱抽象 | `sandbox/base.py` | `CommandResult` + `Sandbox` 协议 |
 | 本地沙箱 | `sandbox/local.py` | subprocess 实现（命令执行 + 文件读写 + 目录列举） |
-| Docker 沙箱 | `sandbox/docker.py` | 容器内执行命令，宿主目录挂载 |
+| Docker 沙箱 | `sandbox/docker.py` | 默认断网，限制 CPU/内存/PID/capability，宿主目录边界校验 |
 | E2B 沙箱 | `sandbox/e2b.py` | 云端隔离沙箱（需 API Key） |
 | 沙箱工厂 | `sandbox/__init__.py` | 按 `SANDBOX_PROVIDER` 分发（local/docker/e2b） |
 | 文件工具 | `tools/file.py` | read_file / write_file / list_files |
@@ -83,7 +83,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 | Planner Agent | `agents/planner.py` | 任务拆解为 JSON 步骤列表 |
 | Testing Agent | `agents/testing.py` | 沙箱运行测试命令 |
 | Review Agent | `agents/review.py` | LLM 审查代码 diff |
-| Orchestrator | `agents/orchestrator.py` | LangGraph StateGraph：Planner→Coding→Testing⇄Coding→Review |
+| Orchestrator | `agents/orchestrator.py` | 按退出码决策，失败日志反馈、有限重试、Review/Failed 终态 |
 | 状态机 | `agents/state.py` | `TaskStatus` 枚举 + 转移表 + `AgentState` |
 | 数据库连接 | `db/session.py` | SQLAlchemy engine + `Base` + `get_db` + `init_db` |
 | ORM 模型 | `models/task.py` | `Task`(task_id/prompt/status/steps) / `Execution` / `TaskStatus` |
@@ -92,9 +92,9 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 
 | 模块 | 文件 | 说明 |
 | --- | --- | --- |
-| 语法分块 | `rag/chunker.py` | 按顶层 class/def 边界切分，保留语法完整性 |
+| AST 分块 | `rag/chunker.py` | Tree-sitter 支持 Python/JS/TS/TSX/Go/Java 顶层符号 |
 | 关键词检索 | `rag/bm25.py` | 标准 BM25 实现（无外部依赖） |
-| 混合检索 | `rag/retriever.py` | `CodeRetriever`，向量检索接口预留 |
+| 混合检索 | `rag/retriever.py` | BM25 + 向量 RRF 融合，可插拔 reranker，Agent 接入 search_code |
 | 评测指标 | `rag/eval.py` | Recall@k / MRR |
 
 ### 3.6 前端（frontend/）
@@ -115,6 +115,8 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 - `test_chunker.py`：代码分块
 - `test_retriever.py`：代码检索
 - `test_eval.py`：评测指标
+- `test_orchestrator.py`：退出码路由、重试预算与误判回归
+- `test_sandbox.py`：包含相对/绝对路径逃逸防护
 
 ---
 
@@ -122,12 +124,12 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 
 | 项 | 说明 | 优先级 |
 | --- | --- | --- |
-| pgvector 向量检索 | 检索目前仅 BM25，向量检索 + 混合重排待接入 | 高 |
+| 持久化语义向量 | 已有 BM25 + 本地哈希向量 RRF；真实 embedding、pgvector 持久化与 reranker 实验待补 | 高 |
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
-| 流式响应（SSE） | Chat 页面流式输出预留，未对接 Agent | 中 |
-| 人工审批（interrupt） | LangGraph Human-in-the-loop 未接入 | 中 |
-| 评测集数据 | 指标函数已就绪，缺真实评测集与解决率报告 | 中 |
-| Celery 异步任务 | worker 已配置，API 当前用线程执行器，未接入分布式队列 | 中 |
+| Chat 流式生成 | Task Timeline 已接 SSE 事件；Chat 页面模型内容流式生成待接 | 中 |
+| Checkpoint 运维 | LangGraph SQLite checkpoint 与崩溃续跑已接入；多 Worker 共享 checkpoint store 与清理策略待补 | 中 |
+| 评测集数据 | 固定 commit 的 runner 与报告已完成，缺 20+ 真实任务数据和付费模型实测结果 | 中 |
+| Celery 运维完善 | 已支持 Celery 分发、重试与取消；监控、死信和多 Worker 压测待补 | 中 |
 | next 安全升级 | 需升级至 next 16 + React 19（breaking change） | 低 |
 
 ---
@@ -139,7 +141,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 平台�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（26 测试已通过，首次启动自动建表）
+# 1. 后端（64 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q
@@ -165,7 +167,9 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 接入 pgvector 向量检索，完善混合检索
-2. 接入 Celery 分布式队列（替换当前线程执行器）
+1. 接入真实 embedding + pgvector，并完成混合检索消融实验
+2. 增加 Celery 监控、死信处理与多 Worker 并发压测
 3. 构建评测集，产出量化解决率报告
-4. 前端流式响应与人工审批交互
+4. Chat 页面接入模型内容流式生成
+5. 改用 GitHub App installation token，并补齐多租户认证与权限模型
+6. 将不可信执行迁移到独立 sandbox service 或 microVM

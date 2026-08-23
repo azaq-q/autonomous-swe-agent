@@ -1,0 +1,58 @@
+# End-to-end demo deployment. The worker uses LocalSandbox inside its own container;
+# use a dedicated sandbox service or microVM isolation before production use.
+services:
+  api:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://swe:swe@postgres:5432/swe_agent
+      REDIS_URL: redis://redis:6379/0
+      TASK_BACKEND: celery
+      SANDBOX_PROVIDER: local
+      WORKDIR: /data/workspace
+      ARTIFACT_DIR: /data/artifacts
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - agent_workspace:/data/workspace
+      - agent_artifacts:/data/artifacts
+
+  worker:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://swe:swe@postgres:5432/swe_agent
+      REDIS_URL: redis://redis:6379/0
+      TASK_BACKEND: celery
+      SANDBOX_PROVIDER: local
+      WORKDIR: /data/workspace
+      ARTIFACT_DIR: /data/artifacts
+    command: ["celery", "-A", "app.worker.celery_app:celery_app", "worker", "--loglevel=info"]
+    depends_on:
+      api:
+        condition: service_started
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - agent_workspace:/data/workspace
+      - agent_artifacts:/data/artifacts
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  agent_workspace:
+  agent_artifacts:
