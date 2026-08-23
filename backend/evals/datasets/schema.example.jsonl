@@ -1,0 +1,1 @@
+{"case_id":"project-bug-001","repository":"https://github.com/OWNER/REPOSITORY.git","source_commit":"0000000000000000000000000000000000000000","base_branch":"main","prompt":"Fix the documented bug and add a regression test.","test_command":"pytest -q","max_iterations":3,"tags":["python","bugfix"]}

@@ -1,17 +1,18 @@
 """工具系统：向 Agent 暴露的工具集合。"""
 
 from app.tools.file import list_files, read_file, write_file
-from app.tools.git import git_commit, git_diff, git_status
+from app.tools.git import git_diff, git_status
+from app.tools.search import search_code
 from app.tools.terminal import run_command
 
 ALL_TOOLS = [
     read_file,
     write_file,
     list_files,
+    search_code,
     run_command,
     git_status,
     git_diff,
-    git_commit,
 ]
 
 
