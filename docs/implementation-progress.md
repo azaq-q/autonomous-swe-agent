@@ -37,7 +37,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | P5 任务持久化与异步执行 | ✅ 完成 | `bdcfcc7` |
 | P6 多沙箱与多模型接入 | ✅ 完成 | `42c5b59` |
 
-单元测试：**64 passed, 1 skipped**（后端；Windows 无符号链接权限时跳过对应安全用例）；覆盖 API 生命周期、checkpoint 恢复、发布幂等、AST/混合检索、路径与符号链接逃逸，Ruff 与前端生产构建纳入 CI。
+单元测试：**65 passed, 1 skipped**（后端；Windows 无符号链接权限时跳过对应安全用例）；覆盖 API 生命周期、checkpoint 恢复、发布幂等、AST/混合检索、路径与符号链接逃逸，Ruff 与前端生产构建纳入 CI。
 
 ---
 
@@ -141,7 +141,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（64 passed, 1 skipped；首次启动自动建表）
+# 1. 后端（65 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q

@@ -59,7 +59,7 @@ Review 与人工审批分别持久化，发布操作可重试且不会重复创�
 | 可靠性 | 有限重试、checkpoint 恢复、协作式取消、幂等发布 |
 | 安全性 | workspace 路径边界、符号链接逃逸测试、Docker 断网与资源限制 |
 | 可观测性 | append-only 事件、SSE 轨迹、token/成本统计 |
-| 质量 | Ruff、64 passed / 1 skipped、Alembic 全量迁移、前端生产构建 |
+| 质量 | Ruff、65 passed / 1 skipped、Alembic 全量迁移、前端生产构建 |
 | 部署 | 非 root 前后端镜像、PostgreSQL/Redis/Worker 演示 Compose |
 
 真实模型效果与线上 PR 案例见后续 Benchmark 报告；当前仓库不使用 mock 数字作为项目成绩。
@@ -134,6 +134,10 @@ docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
 
 该 Compose 文件用于端到端演示：Worker 自身是容器，但内部使用 LocalSandbox。生产部署应把
 不可信代码执行迁移到独立 sandbox service、E2B 或 microVM，不应把演示 Compose 当作生产隔离。
+
+已验证的演示验收条件包括：数据库迁移成功、全部服务健康、镜像不包含 `.env`、任务一次分发后
+进入 `awaiting_approval`。录屏镜头和脱敏检查清单见
+[`docs/demo-script.md`](docs/demo-script.md)。
 
 ## 下一里程碑
 
