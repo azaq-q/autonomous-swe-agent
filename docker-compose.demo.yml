@@ -1,16 +1,26 @@
 # End-to-end demo deployment. The worker uses LocalSandbox inside its own container;
 # use a dedicated sandbox service or microVM isolation before production use.
+x-agent-environment: &agent-environment
+  DATABASE_URL: postgresql+psycopg://swe:swe@postgres:5432/swe_agent
+  REDIS_URL: redis://redis:6379/0
+  TASK_BACKEND: celery
+  SANDBOX_PROVIDER: local
+  WORKDIR: /data/workspace
+  ARTIFACT_DIR: /data/artifacts
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  DEFAULT_MODEL: ${DEFAULT_MODEL:-gpt-4o}
+  MODEL_INPUT_COST_PER_MILLION: ${MODEL_INPUT_COST_PER_MILLION:-0}
+  MODEL_OUTPUT_COST_PER_MILLION: ${MODEL_OUTPUT_COST_PER_MILLION:-0}
+  GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+  GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
+
 services:
   api:
     build:
       context: ./backend
-    environment:
-      DATABASE_URL: postgresql+psycopg://swe:swe@postgres:5432/swe_agent
-      REDIS_URL: redis://redis:6379/0
-      TASK_BACKEND: celery
-      SANDBOX_PROVIDER: local
-      WORKDIR: /data/workspace
-      ARTIFACT_DIR: /data/artifacts
+    environment: *agent-environment
     command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     depends_on:
       postgres:
@@ -26,13 +36,7 @@ services:
   worker:
     build:
       context: ./backend
-    environment:
-      DATABASE_URL: postgresql+psycopg://swe:swe@postgres:5432/swe_agent
-      REDIS_URL: redis://redis:6379/0
-      TASK_BACKEND: celery
-      SANDBOX_PROVIDER: local
-      WORKDIR: /data/workspace
-      ARTIFACT_DIR: /data/artifacts
+    environment: *agent-environment
     command: ["celery", "-A", "app.worker.celery_app:celery_app", "worker", "--loglevel=info"]
     depends_on:
       api:
