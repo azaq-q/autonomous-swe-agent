@@ -29,6 +29,7 @@ class TaskCreate(BaseModel):
     test_command: str = Field(default="pytest", min_length=1, max_length=1_000)
     max_iterations: int = Field(default=3, ge=1, le=10)
     experiment_variant: ExperimentVariant = ExperimentVariant.FULL
+    random_seed: int | None = Field(default=None, ge=0, le=2_147_483_647)
 
 
 class TaskResponse(BaseModel):
@@ -40,6 +41,7 @@ class TaskResponse(BaseModel):
     test_command: str
     max_iterations: int
     experiment_variant: str
+    random_seed: int | None
     status: str
     steps: list[dict]
     result: dict
@@ -73,6 +75,14 @@ class TaskEventResponse(BaseModel):
 DbSession = Annotated[Session, Depends(get_db)]
 
 
+def _lookup_task_database_id(task_id: str) -> int | None:
+    session = SessionLocal()
+    try:
+        return session.query(Task.id).filter(Task.task_id == task_id).scalar()
+    finally:
+        session.close()
+
+
 def _to_response(task: Task) -> TaskResponse:
     return TaskResponse(
         task_id=task.task_id,
@@ -83,6 +93,7 @@ def _to_response(task: Task) -> TaskResponse:
         test_command=task.test_command,
         max_iterations=task.max_iterations,
         experiment_variant=task.experiment_variant,
+        random_seed=task.random_seed,
         status=task.status,
         steps=task.steps or [],
         result=task.result or {},
@@ -116,6 +127,7 @@ def create_task(req: TaskCreate, db: DbSession) -> TaskResponse:
         test_command=req.test_command,
         max_iterations=req.max_iterations,
         experiment_variant=req.experiment_variant.value,
+        random_seed=req.random_seed,
         status=TaskStatus.PENDING.value,
         steps=[{"name": s, "status": "pending"} for s in STEPS],
     )
@@ -320,11 +332,10 @@ def list_task_events(
 
 
 @router.get("/tasks/{task_id}/events/stream")
-async def stream_task_events(task_id: str, request: Request, db: DbSession) -> StreamingResponse:
-    task = db.query(Task).filter(Task.task_id == task_id).first()
-    if task is None:
+async def stream_task_events(task_id: str, request: Request) -> StreamingResponse:
+    database_task_id = _lookup_task_database_id(task_id)
+    if database_task_id is None:
         raise HTTPException(status_code=404, detail="task not found")
-    database_task_id = task.id
     last_event_id = int(request.headers.get("last-event-id", "0") or 0)
 
     async def generate():

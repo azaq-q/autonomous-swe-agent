@@ -73,7 +73,7 @@ Review 与人工审批分别持久化，发布操作可重试且不会重复创�
 | 可靠性 | 有限重试、checkpoint 恢复、协作式取消、幂等发布 |
 | 安全性 | workspace 路径边界、符号链接逃逸测试、Docker 断网与资源限制 |
 | 可观测性 | append-only 事件、SSE 轨迹、token/成本统计 |
-| 质量 | Ruff、82 passed / 1 skipped、SQLite/PostgreSQL 全量迁移、前端生产构建 |
+| 质量 | Ruff、92 passed / 1 skipped、SQLite/PostgreSQL 全量迁移、前端生产构建 |
 | 检索 | 20 条语义集：Neural Recall@1 55%、Recall@5 95%、MRR 0.6917 |
 | 部署 | 非 root 前后端镜像、PostgreSQL/Redis/Worker 演示 Compose |
 
@@ -117,6 +117,11 @@ Token 只通过子进程环境中的临时 Git 认证头使用，不写入 remot
 解决（90%）**，失败复盘推动了测试生成物隔离修复，修复后两例验证为 2/2。
 完整方法、消融、成本、失败分析和局限见
 [`docs/benchmark-curated-v1.md`](docs/benchmark-curated-v1.md)。
+
+项目还提供了可信度优先的 `organic-swebench-verified-v1` 协议：30个真实
+GitHub issue、10个仓库、15个多文件任务、4种严格匹配方案和3个重复种子，最终正确性
+只由官方 SWE-bench 隐藏测试判定。基础设施与数据集已完成；在官方 harness 结果导入前
+不会发布解决率。详见 [`docs/organic-benchmark-v1.md`](docs/organic-benchmark-v1.md)。
 
 ```powershell
 cd backend
@@ -166,7 +171,7 @@ docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
 
 ## 下一里程碑
 
-1. 扩充 organic 多文件缺陷、隐藏测试和检索型任务，并增加重复种子与置信区间
+1. 在批准的模型、计算和成本预算下执行360次 organic matched runs，并导入官方隐藏测试结果
 2. 接入 GitHub App installation token，替代单租户开发 Token
 3. 将执行面迁移到独立 sandbox service 或 microVM
 4. 在大型 organic 仓库加入 chunk 级人工相关性标注与 reranker 对照

@@ -8,6 +8,7 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.core.config import get_settings
+from app.core.llm import llm_seed_scope
 from app.db.session import SessionLocal
 from app.models.task import Execution, ExperimentVariant, Task, TaskStatus
 from app.rag.context import repository_index_scope
@@ -188,7 +189,7 @@ def _execute_real(task_id: str) -> None:
             )
         )
         with SqliteSaver.from_conn_string(str(checkpoint_path)) as checkpointer:
-            with sandbox_scope(str(workspace.path)):
+            with sandbox_scope(str(workspace.path)), llm_seed_scope(task.random_seed):
                 with index_scope as retriever:
                     emit_task_event(
                         task_id,
