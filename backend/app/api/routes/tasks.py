@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.db.session import SessionLocal, get_db
-from app.models.task import Approval, Task, TaskEvent, TaskStatus
+from app.models.task import Approval, ExperimentVariant, Task, TaskEvent, TaskStatus
 from app.services.dispatch import dispatch_publish, dispatch_task, revoke_task
 from app.services.events import emit_task_event
 from app.services.executor import STEPS
@@ -28,6 +28,7 @@ class TaskCreate(BaseModel):
     source_commit: str | None = Field(default=None, pattern=r"^[a-fA-F0-9]{40,64}$")
     test_command: str = Field(default="pytest", min_length=1, max_length=1_000)
     max_iterations: int = Field(default=3, ge=1, le=10)
+    experiment_variant: ExperimentVariant = ExperimentVariant.FULL
 
 
 class TaskResponse(BaseModel):
@@ -38,6 +39,7 @@ class TaskResponse(BaseModel):
     source_commit: str | None
     test_command: str
     max_iterations: int
+    experiment_variant: str
     status: str
     steps: list[dict]
     result: dict
@@ -80,6 +82,7 @@ def _to_response(task: Task) -> TaskResponse:
         source_commit=task.source_commit,
         test_command=task.test_command,
         max_iterations=task.max_iterations,
+        experiment_variant=task.experiment_variant,
         status=task.status,
         steps=task.steps or [],
         result=task.result or {},
@@ -112,6 +115,7 @@ def create_task(req: TaskCreate, db: DbSession) -> TaskResponse:
         source_commit=req.source_commit.lower() if req.source_commit else None,
         test_command=req.test_command,
         max_iterations=req.max_iterations,
+        experiment_variant=req.experiment_variant.value,
         status=TaskStatus.PENDING.value,
         steps=[{"name": s, "status": "pending"} for s in STEPS],
     )

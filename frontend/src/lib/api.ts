@@ -11,6 +11,7 @@ export type Task = {
   source_commit?: string | null;
   test_command: string;
   max_iterations: number;
+  experiment_variant: "full" | "single_agent" | "no_rag" | "no_review";
   status: string;
   steps: TaskStep[];
   result: Record<string, unknown>;
@@ -44,6 +45,7 @@ export type CreateTaskInput = {
   source_commit?: string;
   test_command?: string;
   max_iterations?: number;
+  experiment_variant?: "full" | "single_agent" | "no_rag" | "no_review";
 };
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";

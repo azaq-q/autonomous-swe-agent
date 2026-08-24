@@ -31,6 +31,7 @@ class AgentState(TypedDict):
     test_command: str
     iteration: int
     max_iterations: int
+    experiment_variant: str
     status: str
     plan: list[str]
     messages: list

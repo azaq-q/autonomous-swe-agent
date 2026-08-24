@@ -2,13 +2,14 @@
 
 import json
 import time
+from contextlib import nullcontext
 
 from langgraph.checkpoint.sqlite import SqliteSaver
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.core.config import get_settings
 from app.db.session import SessionLocal
-from app.models.task import Execution, Task, TaskStatus
+from app.models.task import Execution, ExperimentVariant, Task, TaskStatus
 from app.rag.context import repository_index_scope
 from app.sandbox import get_sandbox, sandbox_scope
 from app.services.errors import TaskCancelledError
@@ -177,13 +178,21 @@ def _execute_real(task_id: str) -> None:
         human_feedback = (task.result or {}).get("human_feedback")
         if human_feedback:
             effective_prompt += f"\n\n人工复审要求：\n{human_feedback}"
+        index_scope = (
+            nullcontext(None)
+            if task.experiment_variant == ExperimentVariant.NO_RAG.value
+            else repository_index_scope(workspace.path)
+        )
         with SqliteSaver.from_conn_string(str(checkpoint_path)) as checkpointer:
             with sandbox_scope(str(workspace.path)):
-                with repository_index_scope(workspace.path) as retriever:
+                with index_scope as retriever:
                     emit_task_event(
                         task_id,
                         "repository.indexed",
-                        {"chunks": len(retriever.chunks)},
+                        {
+                            "chunks": len(retriever.chunks) if retriever else 0,
+                            "enabled": retriever is not None,
+                        },
                     )
                     orchestrator = Orchestrator(
                         checkpointer=checkpointer,
@@ -191,6 +200,7 @@ def _execute_real(task_id: str) -> None:
                         on_event=lambda event, payload: emit_task_event(
                             task_id, event, payload
                         ),
+                        experiment_variant=task.experiment_variant,
                     )
                     result = orchestrator.run(
                         effective_prompt,

@@ -28,6 +28,15 @@ class TaskStatus(StrEnum):
     PUBLISHING = "publishing"
 
 
+class ExperimentVariant(StrEnum):
+    """Supported orchestration variants for reproducible ablation studies."""
+
+    FULL = "full"
+    SINGLE_AGENT = "single_agent"
+    NO_RAG = "no_rag"
+    NO_REVIEW = "no_review"
+
+
 class Task(Base):
     __tablename__ = "task"
 
@@ -39,6 +48,7 @@ class Task(Base):
     source_commit: Mapped[str | None] = mapped_column(String(64), nullable=True)
     test_command: Mapped[str] = mapped_column(Text, default="pytest")
     max_iterations: Mapped[int] = mapped_column(Integer, default=3)
+    experiment_variant: Mapped[str] = mapped_column(String(32), default="full")
     status: Mapped[str] = mapped_column(String(32), default=TaskStatus.PENDING.value)
     steps: Mapped[list] = mapped_column(JSON, default=list)
     result: Mapped[dict] = mapped_column(JSON, default=dict)
