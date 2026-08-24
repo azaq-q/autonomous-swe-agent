@@ -109,17 +109,22 @@ Token 只通过子进程环境中的临时 Git 认证头使用，不写入 remot
 
 ## 评测
 
-每条评测任务必须固定 `source_commit`。复制
-`backend/evals/datasets/schema.example.jsonl` 并替换为真实任务后运行：
+每条评测任务必须固定 `source_commit`。项目已公开 `curated-v1`：20 个 Full
+任务和三组各 5 个匹配消融。`deepseek-v4-flash` 的 Full 结果为 **18/20
+解决（90%）**，失败复盘推动了测试生成物隔离修复，修复后两例验证为 2/2。
+完整方法、消融、成本、失败分析和局限见
+[`docs/benchmark-curated-v1.md`](docs/benchmark-curated-v1.md)。
 
 ```powershell
 cd backend
-uv run python -m app.evals.benchmark evals/datasets/my-benchmark.jsonl `
-  --output benchmark-results.json
+uv run python -m app.evals.benchmark evals/datasets/curated-v1.jsonl `
+  --output evals/results/deepseek-v4-flash-curated-v1.json `
+  --model deepseek-v4-flash --max-total-cost-usd 2 --resume
 ```
 
-报告包含解决率、测试通过率、patch 生成率、平均迭代次数和 P50/P95 耗时。
-项目不会把 schema 示例或 mock 结果冒充真实评测成绩。
+报告包含解决率、测试通过率、patch 生成率、平均迭代、P50/P95、Token、
+成本和失败分类。原始结果、数据集哈希、任务 ID 与 patch 哈希均已提交；项目不会
+把 schema 示例、mock 结果或修复后挑选结果冒充原始成绩。
 
 ## 验证
 
@@ -154,9 +159,9 @@ docker compose -f docker-compose.yml -f docker-compose.demo.yml up --build
 
 ## 下一里程碑
 
-1. 使用真实缺陷扩充 20+ 任务评测集并提交可复核报告
+1. 扩充 organic 多文件缺陷、隐藏测试和检索型任务，并增加重复种子与置信区间
 2. 接入 GitHub App installation token，替代单租户开发 Token
 3. 将执行面迁移到独立 sandbox service 或 microVM
-4. 对混合检索、reranker 和编排策略完成消融实验
+4. 接入真实 embedding + pgvector，并在更高区分度数据集复验 RAG
 
 更完整的产品设计与进度记录见 [`docs/`](docs/)。

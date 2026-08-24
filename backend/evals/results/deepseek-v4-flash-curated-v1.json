@@ -1,0 +1,917 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-24T04:35:42.395770+00:00",
+    "dataset": "evals\\datasets\\curated-v1.jsonl",
+    "dataset_sha256": "833dc2090955a71a06ec62c1ad3556b85a034db1b4d24985305ae34e1d41afa1",
+    "model": "deepseek-v4-flash",
+    "input_cost_per_million": 0.14,
+    "output_cost_per_million": 0.28,
+    "selected_case_ids": [
+      "curated-01-clamp",
+      "curated-02-divide",
+      "curated-03-palindrome",
+      "curated-04-mean",
+      "curated-05-bool",
+      "curated-06-unique",
+      "curated-07-chunks",
+      "curated-08-retry",
+      "curated-09-email",
+      "curated-10-percentage",
+      "curated-11-deep-get",
+      "curated-12-counts",
+      "curated-13-fibonacci",
+      "curated-14-index",
+      "curated-15-redact",
+      "curated-16-pagination",
+      "curated-17-csv",
+      "curated-18-duration",
+      "curated-19-moving-average",
+      "curated-20-latest",
+      "ablate-single-03",
+      "ablate-single-07",
+      "ablate-single-11",
+      "ablate-single-15",
+      "ablate-single-19",
+      "ablate-no-rag-03",
+      "ablate-no-rag-07",
+      "ablate-no-rag-11",
+      "ablate-no-rag-15",
+      "ablate-no-rag-19",
+      "ablate-no-review-03",
+      "ablate-no-review-07",
+      "ablate-no-review-11",
+      "ablate-no-review-15",
+      "ablate-no-review-19"
+    ]
+  },
+  "report": {
+    "total": 35,
+    "resolved": 33,
+    "resolved_rate": 0.9429,
+    "test_pass_rate": 1.0,
+    "patch_rate": 1.0,
+    "average_iterations": 1.114,
+    "duration_p50_seconds": 45.484,
+    "duration_p95_seconds": 180.766,
+    "statuses": {
+      "awaiting_approval": 33,
+      "failed": 2
+    },
+    "failure_categories": {
+      "review_rejected": 2
+    },
+    "input_tokens": 2559380,
+    "output_tokens": 208387,
+    "estimated_cost_usd": 0.416662,
+    "by_variant": {
+      "full": {
+        "total": 20,
+        "resolved": 18,
+        "resolved_rate": 0.9,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.2,
+        "duration_p50_seconds": 47.492,
+        "duration_p95_seconds": 180.766,
+        "statuses": {
+          "awaiting_approval": 18,
+          "failed": 2
+        },
+        "failure_categories": {
+          "review_rejected": 2
+        },
+        "input_tokens": 1640753,
+        "output_tokens": 147336,
+        "estimated_cost_usd": 0.27096
+      },
+      "no_rag": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 51.531,
+        "duration_p95_seconds": 53.547,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 257755,
+        "output_tokens": 24479,
+        "estimated_cost_usd": 0.04294
+      },
+      "no_review": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 42.437,
+        "duration_p95_seconds": 60.61,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 443389,
+        "output_tokens": 24353,
+        "estimated_cost_usd": 0.068893
+      },
+      "single_agent": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 21.234,
+        "duration_p95_seconds": 32.359,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 217483,
+        "output_tokens": 12219,
+        "estimated_cost_usd": 0.033869
+      }
+    },
+    "matched_ablation": {
+      "full": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 49.5,
+        "duration_p95_seconds": 86.89,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 353991,
+        "output_tokens": 30111,
+        "estimated_cost_usd": 0.05799
+      },
+      "no_rag": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 51.531,
+        "duration_p95_seconds": 53.547,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 257755,
+        "output_tokens": 24479,
+        "estimated_cost_usd": 0.04294
+      },
+      "no_review": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 42.437,
+        "duration_p95_seconds": 60.61,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 443389,
+        "output_tokens": 24353,
+        "estimated_cost_usd": 0.068893
+      },
+      "single_agent": {
+        "total": 5,
+        "resolved": 5,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 21.234,
+        "duration_p95_seconds": 32.359,
+        "statuses": {
+          "awaiting_approval": 5
+        },
+        "failure_categories": {},
+        "input_tokens": 217483,
+        "output_tokens": 12219,
+        "estimated_cost_usd": 0.033869
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "curated-01-clamp",
+      "task_id": "a185c28543e6",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "9735f1c6f3f123871cd38c47178caa52a6a2ae463e6ad80d061c35979f0cbd3f",
+      "iterations": 1,
+      "duration_seconds": 55.437,
+      "error": null,
+      "tags": [
+        "boundary",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 66650,
+      "output_tokens": 3406,
+      "estimated_cost_usd": 0.01028468,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-02-divide",
+      "task_id": "7103d50a01c0",
+      "status": "failed",
+      "resolved": false,
+      "test_exit_code": 0,
+      "patch_sha256": "623e72f4c8bff524adfdbb035d8b55c62bde6e499e53c3d1f9f061be20b56b6e",
+      "iterations": 3,
+      "duration_seconds": 180.766,
+      "error": "代码在 3 次修改后仍未通过 Review",
+      "tags": [
+        "arithmetic",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 211773,
+      "output_tokens": 23096,
+      "estimated_cost_usd": 0.0361151,
+      "failure_category": "review_rejected"
+    },
+    {
+      "case_id": "curated-03-palindrome",
+      "task_id": "1016214a89c0",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "c9ba33c5c54b16abe00f291ca5e100173915b19b5d45f66b2c5394ae0331c1fc",
+      "iterations": 1,
+      "duration_seconds": 51.531,
+      "error": null,
+      "tags": [
+        "string",
+        "full",
+        "ablation-anchor"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 80702,
+      "output_tokens": 5929,
+      "estimated_cost_usd": 0.0129584,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-04-mean",
+      "task_id": "74e90bb8fddf",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "a03bc35ea85976f18f267edbe307b20aba5798cd4ea05b500044546b322bdb1c",
+      "iterations": 1,
+      "duration_seconds": 35.391,
+      "error": null,
+      "tags": [
+        "arithmetic",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 25742,
+      "output_tokens": 3911,
+      "estimated_cost_usd": 0.00469896,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-05-bool",
+      "task_id": "e3824ff6b4ef",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "2697ac9da2ad1e155464881947469ef44007f1d61806af09c35e2ddfde2cd348",
+      "iterations": 1,
+      "duration_seconds": 60.625,
+      "error": null,
+      "tags": [
+        "parsing",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 83497,
+      "output_tokens": 6853,
+      "estimated_cost_usd": 0.01360842,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-06-unique",
+      "task_id": "d178e45d2393",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "e38e570ecd0f9fd8c60916dc7d79dfe88bca6c920ebf1ca3782e998f04ed7b72",
+      "iterations": 1,
+      "duration_seconds": 47.484,
+      "error": null,
+      "tags": [
+        "collection",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 32679,
+      "output_tokens": 4996,
+      "estimated_cost_usd": 0.00597394,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-07-chunks",
+      "task_id": "e56ef73a0f22",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "96ed3f684e5e46288c4b018d595185efcc1ec6027ebaf98d2f9c215e8c40e270",
+      "iterations": 1,
+      "duration_seconds": 45.484,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "full",
+        "ablation-anchor"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 46806,
+      "output_tokens": 4391,
+      "estimated_cost_usd": 0.00778232,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-08-retry",
+      "task_id": "d5ce54587ccf",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "5b9367b571e4c48ec46c1499644c91b53be219dce163ce25de347026546c159f",
+      "iterations": 1,
+      "duration_seconds": 46.469,
+      "error": null,
+      "tags": [
+        "reliability",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 55565,
+      "output_tokens": 4587,
+      "estimated_cost_usd": 0.00906346,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-09-email",
+      "task_id": "d895970b1050",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "d784a17844de994e1073c38a2fca9aeb7595fe702e5a6d03cbf17423b16db3b9",
+      "iterations": 1,
+      "duration_seconds": 36.375,
+      "error": null,
+      "tags": [
+        "normalization",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 54694,
+      "output_tokens": 3786,
+      "estimated_cost_usd": 0.00871724,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-10-percentage",
+      "task_id": "72aaabcac8b8",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "aca50dcec8a95399ea3dc8ff5059c9273dac0bfba73af40f3a233f446feffa3c",
+      "iterations": 1,
+      "duration_seconds": 47.5,
+      "error": null,
+      "tags": [
+        "arithmetic",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 54761,
+      "output_tokens": 4667,
+      "estimated_cost_usd": 0.0089733,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-11-deep-get",
+      "task_id": "3620227ea08e",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "8a8113466201260076b4b7b5739af2c3a849e16acfdb735801913cb79e9c4251",
+      "iterations": 1,
+      "duration_seconds": 38.39,
+      "error": null,
+      "tags": [
+        "error-handling",
+        "full",
+        "ablation-anchor"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 47435,
+      "output_tokens": 3934,
+      "estimated_cost_usd": 0.00774242,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-12-counts",
+      "task_id": "735291d68ed4",
+      "status": "failed",
+      "resolved": false,
+      "test_exit_code": 0,
+      "patch_sha256": "d1ce26965fdaf82ef4cfe48fc0bce30d216d42e56c6787f5a13dfde82a8d0b2d",
+      "iterations": 3,
+      "duration_seconds": 279.782,
+      "error": "代码在 3 次修改后仍未通过 Review",
+      "tags": [
+        "collection",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 283409,
+      "output_tokens": 32991,
+      "estimated_cost_usd": 0.04891474,
+      "failure_category": "review_rejected"
+    },
+    {
+      "case_id": "curated-13-fibonacci",
+      "task_id": "f757d76486da",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "56bf6c9f2cc4306863c6fccf492ea4dc83b0a7a0cd27113484e4f937973f54fa",
+      "iterations": 1,
+      "duration_seconds": 34.343,
+      "error": null,
+      "tags": [
+        "boundary",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 45178,
+      "output_tokens": 3552,
+      "estimated_cost_usd": 0.00731948,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-14-index",
+      "task_id": "51f3f2c2fdf7",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "0bfe14f32d60782c7ff2e178c711d40b6dca2a7a4fe9524777cb38a91c14c63a",
+      "iterations": 1,
+      "duration_seconds": 76.782,
+      "error": null,
+      "tags": [
+        "validation",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 111610,
+      "output_tokens": 8334,
+      "estimated_cost_usd": 0.01795892,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-15-redact",
+      "task_id": "3694fef1d948",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "63758c8989730891c775068f9a191645472871e313d3d0e22c8e3cf30c13b14a",
+      "iterations": 1,
+      "duration_seconds": 86.89,
+      "error": null,
+      "tags": [
+        "security",
+        "full",
+        "ablation-anchor"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 107009,
+      "output_tokens": 10071,
+      "estimated_cost_usd": 0.01780114,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-16-pagination",
+      "task_id": "e40c3f64ae1f",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "93627f0dac82b646cc04f6a5ef72f333d5a0431d41a15832a049b2636cbde550",
+      "iterations": 1,
+      "duration_seconds": 59.594,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 107999,
+      "output_tokens": 6862,
+      "estimated_cost_usd": 0.01704122,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-17-csv",
+      "task_id": "ab98152f1d6c",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "a88330d5e8264e03dc20ba7b84aa417735452fdf257706270c86b5ed948e1593",
+      "iterations": 1,
+      "duration_seconds": 40.421,
+      "error": null,
+      "tags": [
+        "parsing",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 77722,
+      "output_tokens": 3876,
+      "estimated_cost_usd": 0.01196636,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-18-duration",
+      "task_id": "23379f49a6fd",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "58cd26876a4d4b1a89aa1f9cc66dba75b0933fc1a372f617fb2c706903aadefa",
+      "iterations": 1,
+      "duration_seconds": 33.344,
+      "error": null,
+      "tags": [
+        "arithmetic",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 41542,
+      "output_tokens": 3397,
+      "estimated_cost_usd": 0.00676704,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-19-moving-average",
+      "task_id": "63431bdb302a",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "f36c6a01e1f4e6deeb2199b3c2900014470c3dddb566f13ba3ad5e5d2e750a3f",
+      "iterations": 1,
+      "duration_seconds": 49.5,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "full",
+        "ablation-anchor"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 72039,
+      "output_tokens": 5786,
+      "estimated_cost_usd": 0.01170554,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-20-latest",
+      "task_id": "c5f828a0768c",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "61f57382a1fc1d0b9b50fe90a80ae12b3700d54a07a39b425523cab4c446b3fe",
+      "iterations": 1,
+      "duration_seconds": 33.344,
+      "error": null,
+      "tags": [
+        "selection",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 33941,
+      "output_tokens": 2911,
+      "estimated_cost_usd": 0.00556682,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-single-03",
+      "task_id": "656c96091416",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "c9ba33c5c54b16abe00f291ca5e100173915b19b5d45f66b2c5394ae0331c1fc",
+      "iterations": 1,
+      "duration_seconds": 17.203,
+      "error": null,
+      "tags": [
+        "string",
+        "ablation"
+      ],
+      "experiment_variant": "single_agent",
+      "input_tokens": 27222,
+      "output_tokens": 1676,
+      "estimated_cost_usd": 0.00428036,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-single-07",
+      "task_id": "fbddf97ffb4e",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "96ed3f684e5e46288c4b018d595185efcc1ec6027ebaf98d2f9c215e8c40e270",
+      "iterations": 1,
+      "duration_seconds": 19.203,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "single_agent",
+      "input_tokens": 26694,
+      "output_tokens": 1775,
+      "estimated_cost_usd": 0.00423416,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-single-11",
+      "task_id": "726ca57d3ddd",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "8a8113466201260076b4b7b5739af2c3a849e16acfdb735801913cb79e9c4251",
+      "iterations": 1,
+      "duration_seconds": 32.359,
+      "error": null,
+      "tags": [
+        "error-handling",
+        "ablation"
+      ],
+      "experiment_variant": "single_agent",
+      "input_tokens": 76178,
+      "output_tokens": 3316,
+      "estimated_cost_usd": 0.0115934,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-single-15",
+      "task_id": "dbc1bb4e348c",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "63758c8989730891c775068f9a191645472871e313d3d0e22c8e3cf30c13b14a",
+      "iterations": 1,
+      "duration_seconds": 30.344,
+      "error": null,
+      "tags": [
+        "security",
+        "ablation"
+      ],
+      "experiment_variant": "single_agent",
+      "input_tokens": 49740,
+      "output_tokens": 3305,
+      "estimated_cost_usd": 0.007889,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-single-19",
+      "task_id": "c93a3643f8d8",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "f36c6a01e1f4e6deeb2199b3c2900014470c3dddb566f13ba3ad5e5d2e750a3f",
+      "iterations": 1,
+      "duration_seconds": 21.234,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "single_agent",
+      "input_tokens": 37649,
+      "output_tokens": 2147,
+      "estimated_cost_usd": 0.00587202,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-rag-03",
+      "task_id": "c2ede1bc49e7",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "c9ba33c5c54b16abe00f291ca5e100173915b19b5d45f66b2c5394ae0331c1fc",
+      "iterations": 1,
+      "duration_seconds": 39.422,
+      "error": null,
+      "tags": [
+        "string",
+        "ablation"
+      ],
+      "experiment_variant": "no_rag",
+      "input_tokens": 43907,
+      "output_tokens": 4069,
+      "estimated_cost_usd": 0.0072863,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-rag-07",
+      "task_id": "ad5681665188",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "96ed3f684e5e46288c4b018d595185efcc1ec6027ebaf98d2f9c215e8c40e270",
+      "iterations": 1,
+      "duration_seconds": 30.328,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "no_rag",
+      "input_tokens": 34374,
+      "output_tokens": 3288,
+      "estimated_cost_usd": 0.005733,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-rag-11",
+      "task_id": "6691559901de",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "c21e63558bc5d9fbe861a9c049265f9178328a92401542baac68cf182e8ed876",
+      "iterations": 1,
+      "duration_seconds": 51.531,
+      "error": null,
+      "tags": [
+        "error-handling",
+        "ablation"
+      ],
+      "experiment_variant": "no_rag",
+      "input_tokens": 29893,
+      "output_tokens": 5360,
+      "estimated_cost_usd": 0.00568582,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-rag-15",
+      "task_id": "bb9eb8d0f805",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "63758c8989730891c775068f9a191645472871e313d3d0e22c8e3cf30c13b14a",
+      "iterations": 1,
+      "duration_seconds": 53.547,
+      "error": null,
+      "tags": [
+        "security",
+        "ablation"
+      ],
+      "experiment_variant": "no_rag",
+      "input_tokens": 64336,
+      "output_tokens": 5713,
+      "estimated_cost_usd": 0.01060668,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-rag-19",
+      "task_id": "ea09214b680c",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "f36c6a01e1f4e6deeb2199b3c2900014470c3dddb566f13ba3ad5e5d2e750a3f",
+      "iterations": 1,
+      "duration_seconds": 52.531,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "no_rag",
+      "input_tokens": 85245,
+      "output_tokens": 6049,
+      "estimated_cost_usd": 0.01362802,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-review-03",
+      "task_id": "8f35cb38d9bc",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "8d6118f5144bf563aabf3d5c5c819213520449b9ac963cd34550ad5e798024f3",
+      "iterations": 1,
+      "duration_seconds": 30.328,
+      "error": null,
+      "tags": [
+        "string",
+        "ablation"
+      ],
+      "experiment_variant": "no_review",
+      "input_tokens": 45607,
+      "output_tokens": 3039,
+      "estimated_cost_usd": 0.0072359,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-review-07",
+      "task_id": "7ce39d0670b0",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "96ed3f684e5e46288c4b018d595185efcc1ec6027ebaf98d2f9c215e8c40e270",
+      "iterations": 1,
+      "duration_seconds": 53.547,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "no_review",
+      "input_tokens": 93307,
+      "output_tokens": 6541,
+      "estimated_cost_usd": 0.01489446,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-review-11",
+      "task_id": "3b5df1ef7b2e",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "827225e21c589c73292d26b2c40a464f5fa786153ed3d7f18cc3bc165c202aaf",
+      "iterations": 1,
+      "duration_seconds": 42.437,
+      "error": null,
+      "tags": [
+        "error-handling",
+        "ablation"
+      ],
+      "experiment_variant": "no_review",
+      "input_tokens": 84965,
+      "output_tokens": 4958,
+      "estimated_cost_usd": 0.01328334,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-review-15",
+      "task_id": "b22c9e4da748",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "63758c8989730891c775068f9a191645472871e313d3d0e22c8e3cf30c13b14a",
+      "iterations": 1,
+      "duration_seconds": 27.266,
+      "error": null,
+      "tags": [
+        "security",
+        "ablation"
+      ],
+      "experiment_variant": "no_review",
+      "input_tokens": 52152,
+      "output_tokens": 2952,
+      "estimated_cost_usd": 0.00812784,
+      "failure_category": null
+    },
+    {
+      "case_id": "ablate-no-review-19",
+      "task_id": "505951b2eb70",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "f36c6a01e1f4e6deeb2199b3c2900014470c3dddb566f13ba3ad5e5d2e750a3f",
+      "iterations": 1,
+      "duration_seconds": 60.61,
+      "error": null,
+      "tags": [
+        "off-by-one",
+        "ablation"
+      ],
+      "experiment_variant": "no_review",
+      "input_tokens": 167358,
+      "output_tokens": 6863,
+      "estimated_cost_usd": 0.02535176,
+      "failure_category": null
+    }
+  ]
+}
