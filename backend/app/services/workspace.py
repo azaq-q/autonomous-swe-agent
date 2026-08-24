@@ -45,6 +45,8 @@ class WorkspaceManager:
     ) -> Workspace:
         self._validate_task_id(task_id)
         self._validate_branch(base_branch)
+        if expected_commit and not re.fullmatch(r"[a-fA-F0-9]{40,64}", expected_commit):
+            raise ValueError("固定提交格式无效")
         target = (self.root / task_id).resolve()
         if not target.is_relative_to(self.root):
             raise ValueError("任务工作目录越界")
@@ -79,7 +81,17 @@ class WorkspaceManager:
                 cwd=target,
             )
 
+        self._configure_local_excludes(target)
+
         base_commit = self._run(["git", "rev-parse", "HEAD"], cwd=target).strip()
+        if repository and expected_commit and base_commit.lower() != expected_commit.lower():
+            self._run(
+                ["git", "fetch", "--no-tags", "--depth", "1", "origin", expected_commit],
+                cwd=target,
+                timeout=180,
+            )
+            self._run(["git", "checkout", "--detach", expected_commit], cwd=target)
+            base_commit = self._run(["git", "rev-parse", "HEAD"], cwd=target).strip()
         if expected_commit and base_commit.lower() != expected_commit.lower():
             raise ValueError(
                 f"仓库 HEAD 与固定提交不一致：expected={expected_commit}, actual={base_commit}"
@@ -87,6 +99,21 @@ class WorkspaceManager:
         branch = f"codex/{task_id}"
         self._run(["git", "switch", "-c", branch], cwd=target)
         return Workspace(path=target, base_commit=base_commit, branch=branch)
+
+    @staticmethod
+    def _configure_local_excludes(target: Path) -> None:
+        """Ignore common test/build byproducts without modifying the repository."""
+        exclude_file = target / ".git" / "info" / "exclude"
+        existing = exclude_file.read_text(encoding="utf-8") if exclude_file.exists() else ""
+        patterns = ("__pycache__/", "*.py[cod]", ".pytest_cache/")
+        missing = [pattern for pattern in patterns if pattern not in existing.splitlines()]
+        if missing:
+            separator = "" if not existing or existing.endswith("\n") else "\n"
+            exclude_file.parent.mkdir(parents=True, exist_ok=True)
+            exclude_file.write_text(
+                existing + separator + "\n".join(missing) + "\n",
+                encoding="utf-8",
+            )
 
     def export_patch(self, task_id: str, workspace: Workspace) -> PatchArtifact:
         self._validate_task_id(task_id)

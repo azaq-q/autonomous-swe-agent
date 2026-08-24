@@ -1,8 +1,17 @@
 """Benchmark execution and aggregation tests."""
 
-import httpx
+from pathlib import Path
 
-from app.evals.benchmark import BenchmarkCase, BenchmarkResult, BenchmarkRunner, build_report
+import httpx
+import pytest
+
+from app.evals.benchmark import (
+    BenchmarkCase,
+    BenchmarkResult,
+    BenchmarkRunner,
+    build_report,
+    load_cases,
+)
 
 
 def _case():
@@ -57,6 +66,10 @@ def test_build_report():
             patch_sha256="a" * 64,
             iterations=1,
             duration_seconds=2,
+            experiment_variant="full",
+            input_tokens=100,
+            output_tokens=20,
+            estimated_cost_usd=0.1,
         ),
         BenchmarkResult(
             case_id="b",
@@ -65,9 +78,27 @@ def test_build_report():
             test_exit_code=1,
             iterations=3,
             duration_seconds=10,
+            experiment_variant="single_agent",
+            failure_category="test_failure",
         ),
     ]
     report = build_report(results)
     assert report["resolved_rate"] == 0.5
     assert report["test_pass_rate"] == 0.5
     assert report["average_iterations"] == 2
+    assert report["duration_p95_seconds"] == 10
+    assert report["input_tokens"] == 100
+    assert report["estimated_cost_usd"] == 0.1
+    assert report["by_variant"]["full"]["resolved_rate"] == 1.0
+    assert report["by_variant"]["single_agent"]["failure_categories"] == {
+        "test_failure": 1
+    }
+
+
+def test_load_cases_rejects_duplicate_ids(tmp_path: Path):
+    case = _case().model_dump_json()
+    dataset = tmp_path / "duplicate.jsonl"
+    dataset.write_text(f"{case}\n{case}\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="case_id 重复"):
+        load_cases(dataset)

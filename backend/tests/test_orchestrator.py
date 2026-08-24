@@ -22,6 +22,13 @@ def test_successful_test_routes_to_review():
     assert Orchestrator._after_test(_state(0)) == "review"
 
 
+@pytest.mark.parametrize("variant", ["single_agent", "no_review"])
+def test_review_ablation_routes_success_directly_to_approval(variant):
+    state = _state(0)
+    state["experiment_variant"] = variant
+    assert Orchestrator._after_test(state) == "approval"
+
+
 def test_failed_test_routes_back_to_coding():
     assert Orchestrator._after_test(_state(1, iteration=1)) == "coding"
 
@@ -82,6 +89,25 @@ def test_cooperative_cancellation_stops_before_agent_call():
     orchestrator = _fake_orchestrator(planner=planner, should_cancel=lambda: True)
     with pytest.raises(TaskCancelledError):
         orchestrator.run("task")
+    assert planner.calls == 0
+
+
+def test_single_agent_variant_skips_planner_and_review(tmp_path):
+    planner = _Planner()
+    manager = WorkspaceManager(
+        Settings(
+            workdir=str(tmp_path / "workspaces"),
+            artifact_dir=str(tmp_path / "artifacts"),
+        )
+    )
+    workspace = manager.prepare("abcdef123456", None, "main")
+    orchestrator = _fake_orchestrator(
+        planner=planner,
+        experiment_variant="single_agent",
+    )
+    with sandbox_scope(str(workspace.path), provider="local"):
+        result = orchestrator.run("task")
+    assert result["status"] == "awaiting_approval"
     assert planner.calls == 0
 
 

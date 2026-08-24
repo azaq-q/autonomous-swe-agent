@@ -4,6 +4,7 @@
 避免 Agent 生成的命令直接作用于宿主机。
 """
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -23,6 +24,7 @@ class LocalSandbox:
                 command,
                 shell=True,
                 cwd=str(target),
+                env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
                 capture_output=True,
                 text=True,
                 encoding="utf-8",

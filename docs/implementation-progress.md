@@ -128,7 +128,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
 | Chat 流式生成 | Task Timeline 已接 SSE 事件；Chat 页面模型内容流式生成待接 | 中 |
 | Checkpoint 运维 | LangGraph SQLite checkpoint 与崩溃续跑已接入；多 Worker 共享 checkpoint store 与清理策略待补 | 中 |
-| 评测集数据 | 固定 commit 的 runner 与报告已完成，缺 20+ 真实任务数据和付费模型实测结果 | 中 |
+| 扩展评测集 | `curated-v1` 35 次真实模型运行与消融已完成；下一步增加 organic 多文件缺陷、隐藏测试和重复种子 | 中 |
 | Celery 运维完善 | 已支持 Celery 分发、重试与取消；监控、死信和多 Worker 压测待补 | 中 |
 | next 安全升级 | 需升级至 next 16 + React 19（breaking change） | 低 |
 
@@ -141,7 +141,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（65 passed, 1 skipped；首次启动自动建表）
+# 1. 后端（71 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q
@@ -167,9 +167,9 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 接入真实 embedding + pgvector，并完成混合检索消融实验
+1. 接入真实 embedding + pgvector，并在检索型任务上完成混合检索消融实验
 2. 增加 Celery 监控、死信处理与多 Worker 并发压测
-3. 构建评测集，产出量化解决率报告
+3. 将 curated 评测扩展为 organic 多文件缺陷、隐藏测试和重复种子
 4. Chat 页面接入模型内容流式生成
 5. 改用 GitHub App installation token，并补齐多租户认证与权限模型
 6. 将不可信执行迁移到独立 sandbox service 或 microVM

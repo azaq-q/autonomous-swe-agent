@@ -16,9 +16,9 @@ ALL_TOOLS = [
 ]
 
 
-def get_tools() -> list:
+def get_tools(include_search: bool = True) -> list:
     """返回 Agent 可用的工具列表。"""
-    return list(ALL_TOOLS)
+    return [tool for tool in ALL_TOOLS if include_search or tool is not search_code]
 
 
 __all__ = ["get_tools", "ALL_TOOLS"]

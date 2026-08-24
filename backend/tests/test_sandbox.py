@@ -20,6 +20,14 @@ def test_run_command_cwd(tmp_path):
     assert "sub" in result.stdout
 
 
+def test_python_commands_do_not_write_bytecode(tmp_path):
+    (tmp_path / "module.py").write_text("value = 42\n", encoding="utf-8")
+    result = LocalSandbox(str(tmp_path)).run('python -c "import module"')
+
+    assert result.ok
+    assert not (tmp_path / "__pycache__").exists()
+
+
 def test_write_and_read_file(tmp_path):
     sb = LocalSandbox(str(tmp_path))
     sb.write_file("a.txt", "hello world")

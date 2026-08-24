@@ -14,8 +14,10 @@ from app.agents.review import ReviewAgent
 from app.agents.state import AgentState, TaskStatus
 from app.agents.testing import TestingAgent
 from app.core.usage import sum_message_usage
+from app.models.task import ExperimentVariant
 from app.sandbox import get_sandbox
 from app.services.errors import TaskCancelledError
+from app.tools import get_tools
 
 
 class Orchestrator:
@@ -28,9 +30,13 @@ class Orchestrator:
         testing: Any | None = None,
         review: Any | None = None,
         on_event: Callable[[str, dict], None] | None = None,
+        experiment_variant: str = ExperimentVariant.FULL.value,
     ) -> None:
+        self.experiment_variant = ExperimentVariant(experiment_variant)
         self.planner = planner or PlannerAgent()
-        self.coding = coding or CodingAgent()
+        self.coding = coding or CodingAgent(
+            tools=get_tools(include_search=self.experiment_variant != ExperimentVariant.NO_RAG)
+        )
         self.testing = testing or TestingAgent()
         self.review = review or ReviewAgent()
         self.checkpointer = checkpointer
@@ -47,13 +53,21 @@ class Orchestrator:
         g.add_node("approval", self._approval_node)
         g.add_node("failed", self._failed_node)
 
-        g.add_edge(START, "planner")
+        if self.experiment_variant == ExperimentVariant.SINGLE_AGENT:
+            g.add_edge(START, "coding")
+        else:
+            g.add_edge(START, "planner")
         g.add_edge("planner", "coding")
         g.add_edge("coding", "testing")
         g.add_conditional_edges(
             "testing",
             self._after_test,
-            {"coding": "coding", "review": "review", "failed": "failed"},
+            {
+                "coding": "coding",
+                "review": "review",
+                "approval": "approval",
+                "failed": "failed",
+            },
         )
         g.add_conditional_edges(
             "review",
@@ -84,6 +98,7 @@ class Orchestrator:
             "test_command": test_command,
             "iteration": 0,
             "max_iterations": max_iterations,
+            "experiment_variant": self.experiment_variant.value,
             "status": TaskStatus.PENDING.value,
             "plan": [],
             "messages": [],
@@ -203,6 +218,11 @@ class Orchestrator:
     @staticmethod
     def _after_test(state: AgentState) -> str:
         if state.get("test_exit_code") == 0:
+            if state.get("experiment_variant") in {
+                ExperimentVariant.SINGLE_AGENT.value,
+                ExperimentVariant.NO_REVIEW.value,
+            }:
+                return "approval"
             return "review"
         if state.get("iteration", 0) < state.get("max_iterations", 3):
             return "coding"

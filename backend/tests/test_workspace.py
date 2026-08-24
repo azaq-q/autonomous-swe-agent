@@ -61,6 +61,33 @@ def test_clone_branch_and_export_patch(tmp_path):
     assert len(artifact.sha256) == 64
 
 
+def test_prepare_fetches_pinned_historical_commit(tmp_path):
+    source = _source_repository(tmp_path)
+    historical = _git(source, "rev-parse", "HEAD")
+    (source / "app.py").write_text("answer = 42\n", encoding="utf-8")
+    _git(source, "add", "app.py")
+    _git(source, "commit", "-q", "-m", "new head")
+
+    workspace = _manager(tmp_path).prepare(
+        "abcdef123456", str(source), "main", historical
+    )
+
+    assert workspace.base_commit == historical
+    assert (workspace.path / "app.py").read_text(encoding="utf-8") == "answer = 41\n"
+
+
+def test_prepare_locally_ignores_python_test_artifacts(tmp_path):
+    workspace = _manager(tmp_path).prepare("abcdef123456", None, "main")
+    cache = workspace.path / "package" / "__pycache__"
+    cache.mkdir(parents=True)
+    (cache / "module.cpython-312.pyc").write_bytes(b"generated")
+    pytest_cache = workspace.path / ".pytest_cache"
+    pytest_cache.mkdir()
+    (pytest_cache / "README.md").write_text("generated", encoding="utf-8")
+
+    assert _git(workspace.path, "status", "--short", "--untracked-files=all") == ""
+
+
 def test_reject_unapproved_remote_host(tmp_path):
     manager = _manager(tmp_path)
     with pytest.raises(ValueError, match="不在白名单"):

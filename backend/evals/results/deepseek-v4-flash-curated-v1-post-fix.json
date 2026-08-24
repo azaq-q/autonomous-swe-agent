@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-24T04:35:45.916755+00:00",
+    "dataset": "evals\\datasets\\curated-v1.jsonl",
+    "dataset_sha256": "833dc2090955a71a06ec62c1ad3556b85a034db1b4d24985305ae34e1d41afa1",
+    "model": "deepseek-v4-flash",
+    "input_cost_per_million": 0.14,
+    "output_cost_per_million": 0.28,
+    "selected_case_ids": [
+      "curated-02-divide",
+      "curated-12-counts"
+    ]
+  },
+  "report": {
+    "total": 2,
+    "resolved": 2,
+    "resolved_rate": 1.0,
+    "test_pass_rate": 1.0,
+    "patch_rate": 1.0,
+    "average_iterations": 1.0,
+    "duration_p50_seconds": 65.836,
+    "duration_p95_seconds": 81.156,
+    "statuses": {
+      "awaiting_approval": 2
+    },
+    "failure_categories": {},
+    "input_tokens": 137627,
+    "output_tokens": 10275,
+    "estimated_cost_usd": 0.022145,
+    "by_variant": {
+      "full": {
+        "total": 2,
+        "resolved": 2,
+        "resolved_rate": 1.0,
+        "test_pass_rate": 1.0,
+        "patch_rate": 1.0,
+        "average_iterations": 1.0,
+        "duration_p50_seconds": 65.836,
+        "duration_p95_seconds": 81.156,
+        "statuses": {
+          "awaiting_approval": 2
+        },
+        "failure_categories": {},
+        "input_tokens": 137627,
+        "output_tokens": 10275,
+        "estimated_cost_usd": 0.022145
+      }
+    },
+    "matched_ablation": {}
+  },
+  "results": [
+    {
+      "case_id": "curated-02-divide",
+      "task_id": "f7d9c832a5cb",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "52f1e424e5aa6d3915ba52a246a1274be606e6bac31247eca17d524edc11abfb",
+      "iterations": 1,
+      "duration_seconds": 81.156,
+      "error": null,
+      "tags": [
+        "arithmetic",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 42702,
+      "output_tokens": 5404,
+      "estimated_cost_usd": 0.0074914,
+      "failure_category": null
+    },
+    {
+      "case_id": "curated-12-counts",
+      "task_id": "f94e22bec1e2",
+      "status": "awaiting_approval",
+      "resolved": true,
+      "test_exit_code": 0,
+      "patch_sha256": "c79c6b86cc418504a166295c906e975ccda267a8f72495fbd880fa3722183495",
+      "iterations": 1,
+      "duration_seconds": 50.516,
+      "error": null,
+      "tags": [
+        "collection",
+        "full"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 94925,
+      "output_tokens": 4871,
+      "estimated_cost_usd": 0.01465338,
+      "failure_category": null
+    }
+  ]
+}

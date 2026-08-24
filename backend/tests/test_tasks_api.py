@@ -53,6 +53,7 @@ def _create(client):
             "base_branch": "main",
             "test_command": "pytest -q",
             "max_iterations": 2,
+            "experiment_variant": "no_rag",
         },
     )
     assert response.status_code == 200
@@ -64,6 +65,7 @@ def test_create_get_and_filter_tasks(api):
     created = _create(client)
     assert created["source_commit"] == "a" * 40
     assert created["attempt"] == 0
+    assert created["experiment_variant"] == "no_rag"
 
     response = client.get(f"/api/v1/tasks/{created['task_id']}")
     assert response.status_code == 200
