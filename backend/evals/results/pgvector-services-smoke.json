@@ -1,0 +1,29 @@
+{
+  "repository": "azaq-q/autonomous-swe-agent:services",
+  "source_commit": "7e8a081",
+  "chunks": 16,
+  "first_cache_hit": false,
+  "second_cache_hit": true,
+  "index_key": "21dea25e74b0c317fc2b5097ecd8cdd79bbdad18fb4d217219a76ab443050181",
+  "query": "where is task token usage and estimated model cost recorded",
+  "top_hits": [
+    {
+      "source": "events.py",
+      "symbol": "def emit_task_event",
+      "score": 0.032787,
+      "vector_score": 0.8758
+    },
+    {
+      "source": "publisher.py",
+      "symbol": "class TaskPublisher",
+      "score": 0.032258,
+      "vector_score": 0.8338
+    },
+    {
+      "source": "executor.py",
+      "symbol": "def execute_task",
+      "score": 0.031025,
+      "vector_score": 0.8303
+    }
+  ]
+}

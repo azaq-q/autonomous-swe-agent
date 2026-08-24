@@ -1,0 +1,1473 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-24T06:50:04.817534+00:00",
+    "dataset": "evals\\retrieval\\semantic-v1.json",
+    "dataset_sha256": "c4b5aa4504ed8ec90b6d8171a74caa7c40c2ec17c3281526f168476565267fb9",
+    "dataset_name": "semantic-code-retrieval-v1",
+    "model": "BAAI/bge-small-en",
+    "dimensions": 384
+  },
+  "report": {
+    "bm25": {
+      "metrics": {
+        "total": 20,
+        "recall_at_1": 0.25,
+        "recall_at_3": 0.3,
+        "recall_at_5": 0.3,
+        "mrr": 0.275,
+        "index_seconds": 0.015,
+        "query_p50_ms": 0.029,
+        "query_p95_ms": 0.1
+      },
+      "results": [
+        {
+          "case_id": "semantic-01",
+          "query": "verify a user's password during sign in without timing leaks",
+          "relevant_sources": [
+            "security/credentials.py"
+          ],
+          "predicted_sources": [
+            "validation/email.py",
+            "data/dedupe.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.1
+        },
+        {
+          "case_id": "semantic-02",
+          "query": "create an unpredictable value for a newly authenticated browser session",
+          "relevant_sources": [
+            "security/tokens.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "validation/email.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.101
+        },
+        {
+          "case_id": "semantic-03",
+          "query": "return money to a customer after cancelling a purchase",
+          "relevant_sources": [
+            "billing/refunds.py"
+          ],
+          "predicted_sources": [
+            "security/tokens.py",
+            "billing/refunds.py",
+            "validation/email.py",
+            "billing/tax.py",
+            "privacy/redaction.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 0.087
+        },
+        {
+          "case_id": "semantic-04",
+          "query": "calculate jurisdiction charges with exact currency rounding",
+          "relevant_sources": [
+            "billing/tax.py"
+          ],
+          "predicted_sources": [
+            "observability/trace.py",
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.03
+        },
+        {
+          "case_id": "semantic-05",
+          "query": "wait progressively longer between repeated failed operations",
+          "relevant_sources": [
+            "reliability/backoff.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.021
+        },
+        {
+          "case_id": "semantic-06",
+          "query": "stop calling an unhealthy dependency after too many errors",
+          "relevant_sources": [
+            "reliability/circuit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.031
+        },
+        {
+          "case_id": "semantic-07",
+          "query": "discard stale memoized values after their lifetime ends",
+          "relevant_sources": [
+            "data/cache.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.031
+        },
+        {
+          "case_id": "semantic-08",
+          "query": "remove repeated elements while preserving their original order",
+          "relevant_sources": [
+            "data/dedupe.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.022
+        },
+        {
+          "case_id": "semantic-09",
+          "query": "reject clients that exceed their allowed request budget",
+          "relevant_sources": [
+            "network/rate_limit.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.021
+        },
+        {
+          "case_id": "semantic-10",
+          "query": "repeat a remote operation when temporary connection deadlines occur",
+          "relevant_sources": [
+            "network/retry.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.028
+        },
+        {
+          "case_id": "semantic-11",
+          "query": "wrap work in a distributed tracing interval",
+          "relevant_sources": [
+            "observability/trace.py"
+          ],
+          "predicted_sources": [
+            "data/dedupe.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.028
+        },
+        {
+          "case_id": "semantic-12",
+          "query": "publish elapsed request duration to monitoring",
+          "relevant_sources": [
+            "observability/metrics.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.018
+        },
+        {
+          "case_id": "semantic-13",
+          "query": "commit database work as one unit and undo it after an exception",
+          "relevant_sources": [
+            "storage/transactions.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "observability/trace.py",
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.039
+        },
+        {
+          "case_id": "semantic-14",
+          "query": "fetch the next stable batch without offset based paging",
+          "relevant_sources": [
+            "storage/pagination.py"
+          ],
+          "predicted_sources": [
+            "data/cache.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.028
+        },
+        {
+          "case_id": "semantic-15",
+          "query": "convert an ISO timestamp into a timezone aware UTC moment",
+          "relevant_sources": [
+            "parsing/dates.py"
+          ],
+          "predicted_sources": [
+            "parsing/dates.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.029
+        },
+        {
+          "case_id": "semantic-16",
+          "query": "fail startup when a mandatory environment option is absent",
+          "relevant_sources": [
+            "parsing/config.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.023
+        },
+        {
+          "case_id": "semantic-17",
+          "query": "always release mutual exclusion after a protected critical section",
+          "relevant_sources": [
+            "concurrency/locks.py"
+          ],
+          "predicted_sources": [
+            "concurrency/locks.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.026
+        },
+        {
+          "case_id": "semantic-18",
+          "query": "apply one function to many inputs using a bounded group of threads",
+          "relevant_sources": [
+            "concurrency/pool.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.044
+        },
+        {
+          "case_id": "semantic-19",
+          "query": "hide sensitive account characters except for a short suffix",
+          "relevant_sources": [
+            "privacy/redaction.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "storage/transactions.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.031
+        },
+        {
+          "case_id": "semantic-20",
+          "query": "check whether text has the basic structure of an electronic mail address",
+          "relevant_sources": [
+            "validation/email.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.028
+        }
+      ]
+    },
+    "hash_hybrid": {
+      "metrics": {
+        "total": 20,
+        "recall_at_1": 0.3,
+        "recall_at_3": 0.35,
+        "recall_at_5": 0.35,
+        "mrr": 0.325,
+        "index_seconds": 0.003,
+        "query_p50_ms": 0.621,
+        "query_p95_ms": 0.918
+      },
+      "results": [
+        {
+          "case_id": "semantic-01",
+          "query": "verify a user's password during sign in without timing leaks",
+          "relevant_sources": [
+            "security/credentials.py"
+          ],
+          "predicted_sources": [
+            "validation/email.py",
+            "data/cache.py",
+            "data/dedupe.py",
+            "reliability/circuit.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.591
+        },
+        {
+          "case_id": "semantic-02",
+          "query": "create an unpredictable value for a newly authenticated browser session",
+          "relevant_sources": [
+            "security/tokens.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "validation/email.py",
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "parsing/dates.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.576
+        },
+        {
+          "case_id": "semantic-03",
+          "query": "return money to a customer after cancelling a purchase",
+          "relevant_sources": [
+            "billing/refunds.py"
+          ],
+          "predicted_sources": [
+            "billing/refunds.py",
+            "security/credentials.py",
+            "network/retry.py",
+            "security/tokens.py",
+            "validation/email.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.582
+        },
+        {
+          "case_id": "semantic-04",
+          "query": "calculate jurisdiction charges with exact currency rounding",
+          "relevant_sources": [
+            "billing/tax.py"
+          ],
+          "predicted_sources": [
+            "observability/trace.py",
+            "concurrency/pool.py",
+            "billing/refunds.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.568
+        },
+        {
+          "case_id": "semantic-05",
+          "query": "wait progressively longer between repeated failed operations",
+          "relevant_sources": [
+            "reliability/backoff.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.55
+        },
+        {
+          "case_id": "semantic-06",
+          "query": "stop calling an unhealthy dependency after too many errors",
+          "relevant_sources": [
+            "reliability/circuit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.669
+        },
+        {
+          "case_id": "semantic-07",
+          "query": "discard stale memoized values after their lifetime ends",
+          "relevant_sources": [
+            "data/cache.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "reliability/backoff.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.572
+        },
+        {
+          "case_id": "semantic-08",
+          "query": "remove repeated elements while preserving their original order",
+          "relevant_sources": [
+            "data/dedupe.py"
+          ],
+          "predicted_sources": [],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.569
+        },
+        {
+          "case_id": "semantic-09",
+          "query": "reject clients that exceed their allowed request budget",
+          "relevant_sources": [
+            "network/rate_limit.py"
+          ],
+          "predicted_sources": [
+            "billing/refunds.py",
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.822
+        },
+        {
+          "case_id": "semantic-10",
+          "query": "repeat a remote operation when temporary connection deadlines occur",
+          "relevant_sources": [
+            "network/retry.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.605
+        },
+        {
+          "case_id": "semantic-11",
+          "query": "wrap work in a distributed tracing interval",
+          "relevant_sources": [
+            "observability/trace.py"
+          ],
+          "predicted_sources": [
+            "data/dedupe.py",
+            "observability/trace.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 0.585
+        },
+        {
+          "case_id": "semantic-12",
+          "query": "publish elapsed request duration to monitoring",
+          "relevant_sources": [
+            "observability/metrics.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.632
+        },
+        {
+          "case_id": "semantic-13",
+          "query": "commit database work as one unit and undo it after an exception",
+          "relevant_sources": [
+            "storage/transactions.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "parsing/config.py",
+            "observability/trace.py",
+            "billing/refunds.py",
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.851
+        },
+        {
+          "case_id": "semantic-14",
+          "query": "fetch the next stable batch without offset based paging",
+          "relevant_sources": [
+            "storage/pagination.py"
+          ],
+          "predicted_sources": [
+            "data/cache.py",
+            "billing/refunds.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.619
+        },
+        {
+          "case_id": "semantic-15",
+          "query": "convert an ISO timestamp into a timezone aware UTC moment",
+          "relevant_sources": [
+            "parsing/dates.py"
+          ],
+          "predicted_sources": [
+            "parsing/dates.py",
+            "concurrency/pool.py",
+            "parsing/config.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.919
+        },
+        {
+          "case_id": "semantic-16",
+          "query": "fail startup when a mandatory environment option is absent",
+          "relevant_sources": [
+            "parsing/config.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "storage/transactions.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.918
+        },
+        {
+          "case_id": "semantic-17",
+          "query": "always release mutual exclusion after a protected critical section",
+          "relevant_sources": [
+            "concurrency/locks.py"
+          ],
+          "predicted_sources": [
+            "concurrency/locks.py",
+            "privacy/redaction.py",
+            "network/rate_limit.py",
+            "concurrency/pool.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.724
+        },
+        {
+          "case_id": "semantic-18",
+          "query": "apply one function to many inputs using a bounded group of threads",
+          "relevant_sources": [
+            "concurrency/pool.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 0.623
+        },
+        {
+          "case_id": "semantic-19",
+          "query": "hide sensitive account characters except for a short suffix",
+          "relevant_sources": [
+            "privacy/redaction.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/cache.py",
+            "storage/transactions.py",
+            "reliability/circuit.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.708
+        },
+        {
+          "case_id": "semantic-20",
+          "query": "check whether text has the basic structure of an electronic mail address",
+          "relevant_sources": [
+            "validation/email.py"
+          ],
+          "predicted_sources": [
+            "observability/metrics.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 0.664
+        }
+      ]
+    },
+    "neural_hybrid": {
+      "metrics": {
+        "total": 20,
+        "recall_at_1": 0.55,
+        "recall_at_3": 0.75,
+        "recall_at_5": 0.95,
+        "mrr": 0.6917,
+        "index_seconds": 0.264,
+        "query_p50_ms": 9.98,
+        "query_p95_ms": 12.774
+      },
+      "results": [
+        {
+          "case_id": "semantic-01",
+          "query": "verify a user's password during sign in without timing leaks",
+          "relevant_sources": [
+            "security/credentials.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "validation/email.py",
+            "data/dedupe.py",
+            "security/credentials.py",
+            "security/tokens.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 9.204
+        },
+        {
+          "case_id": "semantic-02",
+          "query": "create an unpredictable value for a newly authenticated browser session",
+          "relevant_sources": [
+            "security/tokens.py"
+          ],
+          "predicted_sources": [
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "storage/transactions.py",
+            "data/cache.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 10.636
+        },
+        {
+          "case_id": "semantic-03",
+          "query": "return money to a customer after cancelling a purchase",
+          "relevant_sources": [
+            "billing/refunds.py"
+          ],
+          "predicted_sources": [
+            "billing/refunds.py",
+            "network/rate_limit.py",
+            "billing/tax.py",
+            "security/tokens.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 9.465
+        },
+        {
+          "case_id": "semantic-04",
+          "query": "calculate jurisdiction charges with exact currency rounding",
+          "relevant_sources": [
+            "billing/tax.py"
+          ],
+          "predicted_sources": [
+            "observability/trace.py",
+            "concurrency/pool.py",
+            "billing/tax.py",
+            "billing/refunds.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "latency_ms": 10.122
+        },
+        {
+          "case_id": "semantic-05",
+          "query": "wait progressively longer between repeated failed operations",
+          "relevant_sources": [
+            "reliability/backoff.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "reliability/backoff.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 9.372
+        },
+        {
+          "case_id": "semantic-06",
+          "query": "stop calling an unhealthy dependency after too many errors",
+          "relevant_sources": [
+            "reliability/circuit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py",
+            "parsing/config.py",
+            "network/retry.py",
+            "reliability/circuit.py",
+            "storage/transactions.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 8.73
+        },
+        {
+          "case_id": "semantic-07",
+          "query": "discard stale memoized values after their lifetime ends",
+          "relevant_sources": [
+            "data/cache.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "privacy/redaction.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 10.608
+        },
+        {
+          "case_id": "semantic-08",
+          "query": "remove repeated elements while preserving their original order",
+          "relevant_sources": [
+            "data/dedupe.py"
+          ],
+          "predicted_sources": [
+            "data/dedupe.py",
+            "privacy/redaction.py",
+            "storage/pagination.py",
+            "data/cache.py",
+            "parsing/config.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 8.692
+        },
+        {
+          "case_id": "semantic-09",
+          "query": "reject clients that exceed their allowed request budget",
+          "relevant_sources": [
+            "network/rate_limit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py",
+            "billing/refunds.py",
+            "privacy/redaction.py",
+            "network/retry.py",
+            "data/cache.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 11.251
+        },
+        {
+          "case_id": "semantic-10",
+          "query": "repeat a remote operation when temporary connection deadlines occur",
+          "relevant_sources": [
+            "network/retry.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/cache.py",
+            "network/rate_limit.py",
+            "reliability/backoff.py",
+            "observability/metrics.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 9.031
+        },
+        {
+          "case_id": "semantic-11",
+          "query": "wrap work in a distributed tracing interval",
+          "relevant_sources": [
+            "observability/trace.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/dedupe.py",
+            "observability/metrics.py",
+            "observability/trace.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 11.597
+        },
+        {
+          "case_id": "semantic-12",
+          "query": "publish elapsed request duration to monitoring",
+          "relevant_sources": [
+            "observability/metrics.py"
+          ],
+          "predicted_sources": [
+            "observability/metrics.py",
+            "data/cache.py",
+            "network/rate_limit.py",
+            "network/retry.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 8.722
+        },
+        {
+          "case_id": "semantic-13",
+          "query": "commit database work as one unit and undo it after an exception",
+          "relevant_sources": [
+            "storage/transactions.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "observability/trace.py",
+            "concurrency/pool.py",
+            "network/retry.py",
+            "concurrency/locks.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 11.742
+        },
+        {
+          "case_id": "semantic-14",
+          "query": "fetch the next stable batch without offset based paging",
+          "relevant_sources": [
+            "storage/pagination.py"
+          ],
+          "predicted_sources": [
+            "data/cache.py",
+            "storage/pagination.py",
+            "network/rate_limit.py",
+            "data/dedupe.py",
+            "observability/metrics.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 9.839
+        },
+        {
+          "case_id": "semantic-15",
+          "query": "convert an ISO timestamp into a timezone aware UTC moment",
+          "relevant_sources": [
+            "parsing/dates.py"
+          ],
+          "predicted_sources": [
+            "parsing/dates.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "reliability/backoff.py",
+            "privacy/redaction.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 9.696
+        },
+        {
+          "case_id": "semantic-16",
+          "query": "fail startup when a mandatory environment option is absent",
+          "relevant_sources": [
+            "parsing/config.py"
+          ],
+          "predicted_sources": [
+            "parsing/config.py",
+            "reliability/circuit.py",
+            "reliability/backoff.py",
+            "network/retry.py",
+            "data/cache.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 12.774
+        },
+        {
+          "case_id": "semantic-17",
+          "query": "always release mutual exclusion after a protected critical section",
+          "relevant_sources": [
+            "concurrency/locks.py"
+          ],
+          "predicted_sources": [
+            "concurrency/locks.py",
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "data/dedupe.py",
+            "reliability/circuit.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 10.954
+        },
+        {
+          "case_id": "semantic-18",
+          "query": "apply one function to many inputs using a bounded group of threads",
+          "relevant_sources": [
+            "concurrency/pool.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "network/rate_limit.py",
+            "network/retry.py",
+            "concurrency/locks.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 8.938
+        },
+        {
+          "case_id": "semantic-19",
+          "query": "hide sensitive account characters except for a short suffix",
+          "relevant_sources": [
+            "privacy/redaction.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/dedupe.py",
+            "storage/transactions.py",
+            "privacy/redaction.py",
+            "parsing/config.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 13.484
+        },
+        {
+          "case_id": "semantic-20",
+          "query": "check whether text has the basic structure of an electronic mail address",
+          "relevant_sources": [
+            "validation/email.py"
+          ],
+          "predicted_sources": [
+            "validation/email.py",
+            "parsing/config.py",
+            "privacy/redaction.py",
+            "data/dedupe.py",
+            "security/credentials.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 11.627
+        }
+      ]
+    },
+    "pgvector_neural_hybrid": {
+      "metrics": {
+        "total": 20,
+        "recall_at_1": 0.55,
+        "recall_at_3": 0.75,
+        "recall_at_5": 0.95,
+        "mrr": 0.6917,
+        "index_seconds": 0.0,
+        "query_p50_ms": 15.608,
+        "query_p95_ms": 17.431
+      },
+      "results": [
+        {
+          "case_id": "semantic-01",
+          "query": "verify a user's password during sign in without timing leaks",
+          "relevant_sources": [
+            "security/credentials.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "validation/email.py",
+            "data/dedupe.py",
+            "security/credentials.py",
+            "security/tokens.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 22.863
+        },
+        {
+          "case_id": "semantic-02",
+          "query": "create an unpredictable value for a newly authenticated browser session",
+          "relevant_sources": [
+            "security/tokens.py"
+          ],
+          "predicted_sources": [
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "storage/transactions.py",
+            "data/cache.py",
+            "network/retry.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0,
+          "latency_ms": 15.848
+        },
+        {
+          "case_id": "semantic-03",
+          "query": "return money to a customer after cancelling a purchase",
+          "relevant_sources": [
+            "billing/refunds.py"
+          ],
+          "predicted_sources": [
+            "billing/refunds.py",
+            "network/rate_limit.py",
+            "billing/tax.py",
+            "security/tokens.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 15.96
+        },
+        {
+          "case_id": "semantic-04",
+          "query": "calculate jurisdiction charges with exact currency rounding",
+          "relevant_sources": [
+            "billing/tax.py"
+          ],
+          "predicted_sources": [
+            "observability/trace.py",
+            "concurrency/pool.py",
+            "billing/tax.py",
+            "billing/refunds.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "latency_ms": 14.909
+        },
+        {
+          "case_id": "semantic-05",
+          "query": "wait progressively longer between repeated failed operations",
+          "relevant_sources": [
+            "reliability/backoff.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "reliability/backoff.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 14.154
+        },
+        {
+          "case_id": "semantic-06",
+          "query": "stop calling an unhealthy dependency after too many errors",
+          "relevant_sources": [
+            "reliability/circuit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py",
+            "parsing/config.py",
+            "network/retry.py",
+            "reliability/circuit.py",
+            "storage/transactions.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 15.548
+        },
+        {
+          "case_id": "semantic-07",
+          "query": "discard stale memoized values after their lifetime ends",
+          "relevant_sources": [
+            "data/cache.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "privacy/redaction.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 15.092
+        },
+        {
+          "case_id": "semantic-08",
+          "query": "remove repeated elements while preserving their original order",
+          "relevant_sources": [
+            "data/dedupe.py"
+          ],
+          "predicted_sources": [
+            "data/dedupe.py",
+            "privacy/redaction.py",
+            "storage/pagination.py",
+            "data/cache.py",
+            "parsing/config.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 13.265
+        },
+        {
+          "case_id": "semantic-09",
+          "query": "reject clients that exceed their allowed request budget",
+          "relevant_sources": [
+            "network/rate_limit.py"
+          ],
+          "predicted_sources": [
+            "network/rate_limit.py",
+            "billing/refunds.py",
+            "privacy/redaction.py",
+            "network/retry.py",
+            "data/cache.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 14.736
+        },
+        {
+          "case_id": "semantic-10",
+          "query": "repeat a remote operation when temporary connection deadlines occur",
+          "relevant_sources": [
+            "network/retry.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/cache.py",
+            "network/rate_limit.py",
+            "reliability/backoff.py",
+            "observability/metrics.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 14.817
+        },
+        {
+          "case_id": "semantic-11",
+          "query": "wrap work in a distributed tracing interval",
+          "relevant_sources": [
+            "observability/trace.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/dedupe.py",
+            "observability/metrics.py",
+            "observability/trace.py",
+            "network/rate_limit.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 15.667
+        },
+        {
+          "case_id": "semantic-12",
+          "query": "publish elapsed request duration to monitoring",
+          "relevant_sources": [
+            "observability/metrics.py"
+          ],
+          "predicted_sources": [
+            "observability/metrics.py",
+            "data/cache.py",
+            "network/rate_limit.py",
+            "network/retry.py",
+            "storage/pagination.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 15.087
+        },
+        {
+          "case_id": "semantic-13",
+          "query": "commit database work as one unit and undo it after an exception",
+          "relevant_sources": [
+            "storage/transactions.py"
+          ],
+          "predicted_sources": [
+            "storage/transactions.py",
+            "observability/trace.py",
+            "concurrency/pool.py",
+            "network/retry.py",
+            "concurrency/locks.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 17.431
+        },
+        {
+          "case_id": "semantic-14",
+          "query": "fetch the next stable batch without offset based paging",
+          "relevant_sources": [
+            "storage/pagination.py"
+          ],
+          "predicted_sources": [
+            "data/cache.py",
+            "storage/pagination.py",
+            "network/rate_limit.py",
+            "data/dedupe.py",
+            "observability/metrics.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5,
+          "latency_ms": 16.644
+        },
+        {
+          "case_id": "semantic-15",
+          "query": "convert an ISO timestamp into a timezone aware UTC moment",
+          "relevant_sources": [
+            "parsing/dates.py"
+          ],
+          "predicted_sources": [
+            "parsing/dates.py",
+            "data/cache.py",
+            "observability/metrics.py",
+            "reliability/backoff.py",
+            "privacy/redaction.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 16.356
+        },
+        {
+          "case_id": "semantic-16",
+          "query": "fail startup when a mandatory environment option is absent",
+          "relevant_sources": [
+            "parsing/config.py"
+          ],
+          "predicted_sources": [
+            "parsing/config.py",
+            "reliability/circuit.py",
+            "reliability/backoff.py",
+            "network/retry.py",
+            "data/cache.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 15.818
+        },
+        {
+          "case_id": "semantic-17",
+          "query": "always release mutual exclusion after a protected critical section",
+          "relevant_sources": [
+            "concurrency/locks.py"
+          ],
+          "predicted_sources": [
+            "concurrency/locks.py",
+            "privacy/redaction.py",
+            "parsing/config.py",
+            "data/dedupe.py",
+            "reliability/circuit.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 15.949
+        },
+        {
+          "case_id": "semantic-18",
+          "query": "apply one function to many inputs using a bounded group of threads",
+          "relevant_sources": [
+            "concurrency/pool.py"
+          ],
+          "predicted_sources": [
+            "concurrency/pool.py",
+            "network/rate_limit.py",
+            "network/retry.py",
+            "concurrency/locks.py",
+            "data/dedupe.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 16.101
+        },
+        {
+          "case_id": "semantic-19",
+          "query": "hide sensitive account characters except for a short suffix",
+          "relevant_sources": [
+            "privacy/redaction.py"
+          ],
+          "predicted_sources": [
+            "network/retry.py",
+            "data/dedupe.py",
+            "storage/transactions.py",
+            "privacy/redaction.py",
+            "parsing/config.py"
+          ],
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25,
+          "latency_ms": 14.463
+        },
+        {
+          "case_id": "semantic-20",
+          "query": "check whether text has the basic structure of an electronic mail address",
+          "relevant_sources": [
+            "validation/email.py"
+          ],
+          "predicted_sources": [
+            "validation/email.py",
+            "parsing/config.py",
+            "privacy/redaction.py",
+            "data/dedupe.py",
+            "security/credentials.py"
+          ],
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0,
+          "latency_ms": 14.714
+        }
+      ],
+      "cache": {
+        "index_key": "e4e128b8b3e5f690ff76c9e8a782d9607ec47c83aff2ad9160622b93406406a2",
+        "hit_before_run": false,
+        "hit_after_run": true,
+        "stored_chunks": 20
+      }
+    }
+  }
+}
