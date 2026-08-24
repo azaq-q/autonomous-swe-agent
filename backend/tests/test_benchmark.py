@@ -9,6 +9,7 @@ from app.evals.benchmark import (
     BenchmarkCase,
     BenchmarkResult,
     BenchmarkRunner,
+    _safe_harness_label,
     apply_swebench_report,
     build_report,
     expand_runs,
@@ -24,6 +25,13 @@ def _case():
         source_commit="a" * 40,
         prompt="Fix bug",
         test_command="pytest -q",
+    )
+
+
+def test_swebench_harness_label_is_cross_platform_path_safe():
+    assert (
+        _safe_harness_label("org/model:v1", "full", 11)
+        == "org-model-v1--full--seed-11"
     )
 
 

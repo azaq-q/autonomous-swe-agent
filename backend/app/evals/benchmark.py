@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 import random
+import re
 import statistics
 import time
 from collections import defaultdict
@@ -588,6 +589,12 @@ def apply_swebench_report(
     return updated
 
 
+def _safe_harness_label(model: str, variant: str, seed: int) -> str:
+    """Return a label safe for harness-created paths on Windows and POSIX."""
+    label = f"{model}--{variant}--seed-{seed}"
+    return re.sub(r"[^A-Za-z0-9._-]+", "-", label).strip(".-") or "model"
+
+
 def _write_predictions(directory: Path, results: Sequence[BenchmarkResult], model: str) -> None:
     cohorts: dict[tuple[str, int], list[BenchmarkResult]] = defaultdict(list)
     for result in results:
@@ -599,7 +606,7 @@ def _write_predictions(directory: Path, results: Sequence[BenchmarkResult], mode
         rows = [
             {
                 "instance_id": result.swebench_instance_id,
-                "model_name_or_path": f"{model}:{variant}:seed-{seed}",
+                "model_name_or_path": _safe_harness_label(model, variant, seed),
                 "model_patch": result.model_patch,
             }
             for result in sorted(cohort, key=lambda item: item.swebench_instance_id or "")

@@ -131,7 +131,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
 | Chat 流式生成 | Task Timeline 已接 SSE 事件；Chat 页面模型内容流式生成待接 | 中 |
 | Checkpoint 运维 | LangGraph SQLite checkpoint 与崩溃续跑已接入；多 Worker 共享 checkpoint store 与清理策略待补 | 中 |
-| Organic 评测执行 | 30题/10仓库/15多文件的 SWE-bench Verified 清单、隐藏评测导出、3种子和置信区间已完成；360次真实模型运行与官方 harness 执行待批准预算 | 中 |
+| Organic 评测执行 | 5题 × Full × seed 11 pilot 与官方 harness 已完成（3/5 resolved），并发现单题预算、超时成本遗漏和 Windows harness 换行兼容问题；完整360次运行仍待预算 | 中 |
 | Celery 运维完善 | 已支持 Celery 分发、重试与取消；监控、死信和多 Worker 压测待补 | 中 |
 | next 安全升级 | 需升级至 next 16 + React 19（breaking change） | 低 |
 
@@ -144,7 +144,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（92 passed, 1 skipped；首次启动自动建表）
+# 1. 后端（93 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q
@@ -170,7 +170,7 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 按批准预算执行360次 SWE-bench Verified matched runs，并导入12份官方 harness 报告
+1. 先修复单题 token/调用预算和 timeout 成本归集，再按批准预算执行360次 SWE-bench Verified matched runs
 2. 在大型 organic 仓库完成 chunk 级标注、reranker 对照与重复查询置信区间
 3. 增加 Celery 监控、死信处理与多 Worker 并发压测
 4. Chat 页面接入模型内容流式生成

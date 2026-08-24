@@ -2,9 +2,10 @@
 
 ## Status
 
-The evaluation infrastructure and dataset are complete. No model score is
-published yet: the 360-run matched experiment and official SWE-bench Docker
-harness require explicit model credentials, compute time, and a cost budget.
+The evaluation infrastructure and dataset are complete. A five-task `full`,
+seed-11 pilot has been run through the official harness and resolved 3/5 tasks;
+see [`organic-pilot-5-results.md`](organic-pilot-5-results.md). This small pilot
+is an environment and cost validation, not the pending 360-run matched result.
 Pending hidden-test runs are reported as `null`, never as failures or successes.
 
 ## Dataset
