@@ -13,6 +13,14 @@ x-agent-environment: &agent-environment
   DEFAULT_MODEL: ${DEFAULT_MODEL:-gpt-4o}
   MODEL_INPUT_COST_PER_MILLION: ${MODEL_INPUT_COST_PER_MILLION:-0}
   MODEL_OUTPUT_COST_PER_MILLION: ${MODEL_OUTPUT_COST_PER_MILLION:-0}
+  EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-hashing}
+  EMBEDDING_MODEL: ${EMBEDDING_MODEL:-BAAI/bge-small-en}
+  EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-384}
+  EMBEDDING_BATCH_SIZE: ${EMBEDDING_BATCH_SIZE:-64}
+  EMBEDDING_CACHE_DIR: /data/embedding-cache
+  EMBEDDING_MODEL_PATH: ${EMBEDDING_MODEL_PATH:-}
+  RAG_VECTOR_STORE: ${RAG_VECTOR_STORE:-memory}
+  RAG_VECTOR_THRESHOLD: ${RAG_VECTOR_THRESHOLD:-0.1}
   GITHUB_TOKEN: ${GITHUB_TOKEN:-}
   GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
 
@@ -32,6 +40,7 @@ services:
     volumes:
       - agent_workspace:/data/workspace
       - agent_artifacts:/data/artifacts
+      - embedding_cache:/data/embedding-cache
 
   worker:
     build:
@@ -46,6 +55,7 @@ services:
     volumes:
       - agent_workspace:/data/workspace
       - agent_artifacts:/data/artifacts
+      - embedding_cache:/data/embedding-cache
 
   frontend:
     build:
@@ -60,3 +70,4 @@ services:
 volumes:
   agent_workspace:
   agent_artifacts:
+  embedding_cache:

@@ -1,5 +1,6 @@
 """BM25/vector hybrid retrieval with reciprocal-rank fusion and optional reranking."""
 
+import hashlib
 from collections.abc import Callable
 
 from app.rag.bm25 import BM25
@@ -7,6 +8,7 @@ from app.rag.chunker import chunk_code
 from app.rag.embeddings import Embedder, cosine_similarity
 
 Reranker = Callable[[str, list[dict]], list[float]]
+VectorSearcher = Callable[[list[float], int], list[tuple[str, float]]]
 
 
 class CodeRetriever:
@@ -15,12 +17,20 @@ class CodeRetriever:
         files: dict[str, str] | None = None,
         embedder: Embedder | None = None,
         reranker: Reranker | None = None,
+        chunks: list[dict] | None = None,
+        vectors: list[list[float]] | None = None,
+        vector_searcher: VectorSearcher | None = None,
+        vector_threshold: float = 0.1,
     ) -> None:
         self.chunks: list[dict] = []
         self.bm25: BM25 | None = None
         self.embedder = embedder
         self.reranker = reranker
-        self.vectors: list[list[float]] = []
+        self.vectors: list[list[float]] = vectors or []
+        self.vector_searcher = vector_searcher
+        self.vector_threshold = vector_threshold
+        if chunks is not None:
+            self._set_chunks(chunks)
         if files:
             self.index(files)
 
@@ -28,9 +38,24 @@ class CodeRetriever:
         self.chunks = []
         for path, content in files.items():
             self.chunks.extend(chunk_code(content, source=path))
+        self._add_chunk_ids()
         documents = [self._document(chunk) for chunk in self.chunks]
         self.bm25 = BM25(documents)
         self.vectors = self.embedder.embed_documents(documents) if self.embedder else []
+
+    def _set_chunks(self, chunks: list[dict]) -> None:
+        self.chunks = [dict(chunk) for chunk in chunks]
+        self._add_chunk_ids()
+        self.bm25 = BM25([self._document(chunk) for chunk in self.chunks])
+
+    def _add_chunk_ids(self) -> None:
+        for chunk in self.chunks:
+            if "chunk_id" not in chunk:
+                identity = (
+                    f"{chunk['source']}:{chunk['start_line']}:{chunk['end_line']}:"
+                    f"{chunk['symbol']}"
+                )
+                chunk["chunk_id"] = hashlib.sha256(identity.encode()).hexdigest()
 
     def search(self, query: str, k: int = 5) -> list[dict]:
         if not query.strip() or not self.chunks or self.bm25 is None:
@@ -48,7 +73,19 @@ class CodeRetriever:
 
         vector_scores = [0.0] * len(self.chunks)
         vector_rank: list[int] = []
-        if self.embedder and self.vectors:
+        if self.embedder and self.vector_searcher:
+            query_vector = self.embedder.embed_query(query)
+            id_to_index = {
+                chunk["chunk_id"]: index for index, chunk in enumerate(self.chunks)
+            }
+            hits = self.vector_searcher(query_vector, max(k * 4, k))
+            vector_rank = []
+            for chunk_id, score in hits:
+                index = id_to_index.get(chunk_id)
+                if index is not None and score > self.vector_threshold:
+                    vector_scores[index] = score
+                    vector_rank.append(index)
+        elif self.embedder and self.vectors:
             query_vector = self.embedder.embed_query(query)
             vector_scores = [cosine_similarity(query_vector, vector) for vector in self.vectors]
             vector_rank = [
@@ -58,7 +95,7 @@ class CodeRetriever:
                     key=lambda item: vector_scores[item],
                     reverse=True,
                 )
-                if vector_scores[index] > 0.1
+                if vector_scores[index] > self.vector_threshold
             ]
 
         fused: dict[int, float] = {}

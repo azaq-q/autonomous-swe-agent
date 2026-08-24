@@ -53,3 +53,37 @@ def test_optional_reranker_changes_candidate_order():
     )
     results = retriever.search("return", k=3)
     assert results[0]["source"] == "utils.py"
+
+
+def test_external_vector_searcher_uses_persistent_chunk_ids():
+    chunks = [
+        {
+            "source": "auth.py",
+            "language": "python",
+            "symbol": "def login",
+            "node_type": "function_definition",
+            "content": "def login(): pass",
+            "start_line": 1,
+            "end_line": 1,
+        },
+        {
+            "source": "payment.py",
+            "language": "python",
+            "symbol": "def charge",
+            "node_type": "function_definition",
+            "content": "def charge(): pass",
+            "start_line": 1,
+            "end_line": 1,
+        },
+    ]
+    persistent_id = CodeRetriever(chunks=chunks).chunks[0]["chunk_id"]
+    retriever = CodeRetriever(
+        chunks=chunks,
+        embedder=_SemanticEmbedder(),
+        vector_searcher=lambda vector, k: [(persistent_id, 0.95)],
+    )
+
+    results = retriever.search("credentials")
+
+    assert results[0]["source"] == "auth.py"
+    assert results[0]["vector_score"] == 0.95

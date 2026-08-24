@@ -54,7 +54,7 @@ _SYMBOL_RE = re.compile(
 
 
 @lru_cache(maxsize=8)
-def _parser(language: str) -> Parser:
+def _language(language: str) -> Language:
     if language == "python":
         import tree_sitter_python as grammar
 
@@ -79,7 +79,15 @@ def _parser(language: str) -> Parser:
         capsule = grammar.language()
     else:
         raise ValueError(f"不支持的 Tree-sitter 语言：{language}")
-    return Parser(Language(capsule))
+    # Keep the Language wrapper alive independently of Parser. Some native
+    # grammar bindings do not retain a strong Python reference, which can leave
+    # Parser with a dangling language pointer after repeated parses.
+    return Language(capsule)
+
+
+@lru_cache(maxsize=8)
+def _parser(language: str) -> Parser:
+    return Parser(_language(language))
 
 
 def infer_language(source: str) -> str | None:

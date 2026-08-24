@@ -181,7 +181,11 @@ def _execute_real(task_id: str) -> None:
         index_scope = (
             nullcontext(None)
             if task.experiment_variant == ExperimentVariant.NO_RAG.value
-            else repository_index_scope(workspace.path)
+            else repository_index_scope(
+                workspace.path,
+                repository=task.repository or "local",
+                source_commit=workspace.base_commit,
+            )
         )
         with SqliteSaver.from_conn_string(str(checkpoint_path)) as checkpointer:
             with sandbox_scope(str(workspace.path)):
@@ -192,6 +196,7 @@ def _execute_real(task_id: str) -> None:
                         {
                             "chunks": len(retriever.chunks) if retriever else 0,
                             "enabled": retriever is not None,
+                            "metadata": getattr(retriever, "index_metadata", {}),
                         },
                     )
                     orchestrator = Orchestrator(
