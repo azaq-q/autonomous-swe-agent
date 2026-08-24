@@ -94,8 +94,14 @@ Copy-Item .env.example .env
 | `ANTHROPIC_API_KEY` | 空 | 填了则走 Anthropic 真实编排 |
 | `DEFAULT_MODEL` | `gpt-4o` | 模型名，需与所选 provider 匹配 |
 | `REDIS_URL` | `redis://localhost:6379/0` | 本地默认模式用不到 |
+| `EMBEDDING_PROVIDER` | `hashing` | `hashing` / `fastembed` / `openai` |
+| `RAG_VECTOR_STORE` | `memory` | `memory` / `pgvector`；后者要求 PostgreSQL |
 
 > 不配置任何 API Key 时，任务会走 **mock 模式**（模拟步骤流转），不影响功能验证。
+
+真实本地语义检索可设置 `EMBEDDING_PROVIDER=fastembed`、
+`EMBEDDING_MODEL=BAAI/bge-small-en`。生产环境建议预下载模型并设置
+`EMBEDDING_MODEL_PATH`；持久化向量还需 PostgreSQL 和 `RAG_VECTOR_STORE=pgvector`。
 
 ---
 

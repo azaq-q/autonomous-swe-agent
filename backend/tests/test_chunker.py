@@ -1,6 +1,21 @@
 """代码分块单元测试。"""
 
+from pathlib import Path
+
 from app.rag.chunker import chunk_code
+
+
+def test_repeatedly_chunks_real_project_files_without_native_parser_failure():
+    backend = Path(__file__).resolve().parents[1]
+    sources = sorted((backend / "app" / "services").glob("*.py"))
+
+    for _ in range(3):
+        for source in sources:
+            chunks = chunk_code(
+                source.read_text(encoding="utf-8"),
+                source=source.relative_to(backend).as_posix(),
+            )
+            assert chunks
 
 
 def test_chunk_by_function():

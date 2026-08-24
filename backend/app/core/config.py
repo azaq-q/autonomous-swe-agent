@@ -36,6 +36,17 @@ class Settings(BaseSettings):
     model_input_cost_per_million: float = 0.0
     model_output_cost_per_million: float = 0.0
 
+    # Repository retrieval. `hashing` is the zero-download fallback; `fastembed`
+    # runs a real local ONNX model; `openai` uses an OpenAI-compatible endpoint.
+    embedding_provider: str = "hashing"  # hashing | fastembed | openai
+    embedding_model: str = "BAAI/bge-small-en"
+    embedding_dimensions: int = 384
+    embedding_batch_size: int = 64
+    embedding_cache_dir: str = "./.fastembed_cache"
+    embedding_model_path: str | None = None
+    rag_vector_store: str = "memory"  # memory | pgvector
+    rag_vector_threshold: float = 0.1
+
     workdir: str = "./workspace"  # 本地沙箱工作目录
     artifact_dir: str = "./artifacts"
     repository_allowed_hosts: str = "github.com"

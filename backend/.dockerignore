@@ -3,6 +3,7 @@
 .env.*
 .pytest_cache
 .ruff_cache
+.fastembed_cache
 workspace
 artifacts
 *.db

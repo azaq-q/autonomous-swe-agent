@@ -96,6 +96,9 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | 关键词检索 | `rag/bm25.py` | 标准 BM25 实现（无外部依赖） |
 | 混合检索 | `rag/retriever.py` | BM25 + 向量 RRF 融合，可插拔 reranker，Agent 接入 search_code |
 | 评测指标 | `rag/eval.py` | Recall@k / MRR |
+| 真实向量 | `rag/embeddings.py` | FastEmbed / OpenAI-compatible / Hashing 可配置 provider |
+| 持久化 | `rag/store.py` | pgvector 384 维存储、HNSW、内容寻址缓存与余弦检索 |
+| 检索消融 | `evals/retrieval.py` | BM25 / Hash / Neural / pgvector 的逐查询原始结果 |
 
 ### 3.6 前端（frontend/）
 
@@ -124,7 +127,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 
 | 项 | 说明 | 优先级 |
 | --- | --- | --- |
-| 持久化语义向量 | 已有 BM25 + 本地哈希向量 RRF；真实 embedding、pgvector 持久化与 reranker 实验待补 | 高 |
+| 检索规模化 | FastEmbed + pgvector + 20 条语义消融已完成；大型 organic 仓库、人工相关性标注和 reranker 对照待补 | 中 |
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
 | Chat 流式生成 | Task Timeline 已接 SSE 事件；Chat 页面模型内容流式生成待接 | 中 |
 | Checkpoint 运维 | LangGraph SQLite checkpoint 与崩溃续跑已接入；多 Worker 共享 checkpoint store 与清理策略待补 | 中 |
@@ -141,7 +144,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（71 passed, 1 skipped；首次启动自动建表）
+# 1. 后端（82 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q
@@ -167,7 +170,7 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 接入真实 embedding + pgvector，并在检索型任务上完成混合检索消融实验
+1. 在大型 organic 仓库完成 chunk 级标注、reranker 对照与重复查询置信区间
 2. 增加 Celery 监控、死信处理与多 Worker 并发压测
 3. 将 curated 评测扩展为 organic 多文件缺陷、隐藏测试和重复种子
 4. Chat 页面接入模型内容流式生成
