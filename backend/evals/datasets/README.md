@@ -48,3 +48,20 @@ of general software-engineering performance. Its defects are localized and its
 tests are narrow. It is useful for reproducibility, workflow regression, and
 controlled ablations; broader multi-file and real-world repository tasks remain
 future evaluation work.
+
+## `organic-swebench-verified-v1.jsonl`
+
+This is the credibility-focused successor to `curated-v1`: 30 deterministic
+samples from the official SWE-bench Verified test split, covering 10 real
+repositories with at least 15 multi-file fixes and no more than six tasks from
+one repository. The manifest excludes both the gold patch and the hidden test
+patch. See [`docs/organic-benchmark-v1.md`](../../../docs/organic-benchmark-v1.md)
+for the 360-run matched protocol, hidden-harness workflow, and statistical rules.
+
+Regenerate it from the official dataset server:
+
+```bash
+uv run python -m app.evals.import_swebench \
+  --output evals/datasets/organic-swebench-verified-v1.jsonl \
+  --size 30 --seed 42 --max-per-repository 6 --min-multifile 15
+```

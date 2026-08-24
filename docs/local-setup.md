@@ -118,7 +118,7 @@ uv sync
 
 ```powershell
 uv run pytest -q
-# 期望输出：26 passed
+# 期望输出：92 passed, 1 skipped（无符号链接权限时）
 ```
 
 启动后端服务：

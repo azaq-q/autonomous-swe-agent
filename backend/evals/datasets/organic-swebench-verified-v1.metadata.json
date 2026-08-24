@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-08-24T08:47:26.318635+00:00",
+  "source": "https://datasets-server.huggingface.co/rows?dataset=SWE-bench%2FSWE-bench_Verified&config=default&split=test&offset=0&length=100",
+  "source_sha256": "5ffdd01492c185e246afa31a9b2163052e4d090847d208277eccd4fd8fe60d2f",
+  "selection_seed": 42,
+  "size": 30,
+  "max_per_repository": 6,
+  "minimum_multifile_tasks": 15,
+  "multifile_tasks": 15,
+  "repositories": {
+    "https://github.com/astropy/astropy.git": 3,
+    "https://github.com/django/django.git": 6,
+    "https://github.com/matplotlib/matplotlib.git": 1,
+    "https://github.com/pallets/flask.git": 1,
+    "https://github.com/pydata/xarray.git": 2,
+    "https://github.com/pylint-dev/pylint.git": 2,
+    "https://github.com/pytest-dev/pytest.git": 2,
+    "https://github.com/scikit-learn/scikit-learn.git": 2,
+    "https://github.com/sphinx-doc/sphinx.git": 6,
+    "https://github.com/sympy/sympy.git": 5
+  },
+  "contains_gold_patch": false,
+  "contains_test_patch": false,
+  "note": "Hidden tests are applied only by the official SWE-bench harness."
+}
