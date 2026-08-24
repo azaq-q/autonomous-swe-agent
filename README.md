@@ -120,8 +120,10 @@ Token 只通过子进程环境中的临时 Git 认证头使用，不写入 remot
 
 项目还提供了可信度优先的 `organic-swebench-verified-v1` 协议：30个真实
 GitHub issue、10个仓库、15个多文件任务、4种严格匹配方案和3个重复种子，最终正确性
-只由官方 SWE-bench 隐藏测试判定。基础设施与数据集已完成；在官方 harness 结果导入前
-不会发布解决率。详见 [`docs/organic-benchmark-v1.md`](docs/organic-benchmark-v1.md)。
+只由官方 SWE-bench 隐藏测试判定。5题 × Full × seed 11 的真实 pilot 已完成，官方
+harness 结果为 **3/5 resolved（60%）**；样本很小且区间很宽，不作为完整 benchmark
+结论。详见 [`docs/organic-pilot-5-results.md`](docs/organic-pilot-5-results.md) 和
+[`docs/organic-benchmark-v1.md`](docs/organic-benchmark-v1.md)。
 
 ```powershell
 cd backend

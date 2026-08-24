@@ -1,0 +1,309 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-24T14:00:06.402419+00:00",
+    "dataset": "evals\\datasets\\organic-swebench-verified-v1.jsonl",
+    "dataset_sha256": "c2b160bf0e5be0188035b525ae0fcaea09d338d961fdc87bdd921d6133f808bd",
+    "model": "deepseek-v4-flash",
+    "input_cost_per_million": 0.14,
+    "output_cost_per_million": 0.28,
+    "selected_case_ids": [
+      "pallets__flask-5014",
+      "pylint-dev__pylint-4551",
+      "pytest-dev__pytest-8399",
+      "sphinx-doc__sphinx-8593",
+      "sympy__sympy-20916"
+    ],
+    "seeds": [
+      11
+    ],
+    "variants": [
+      "full"
+    ],
+    "run_plan": [
+      "pallets__flask-5014::full::seed-11",
+      "pylint-dev__pylint-4551::full::seed-11",
+      "pytest-dev__pytest-8399::full::seed-11",
+      "sphinx-doc__sphinx-8593::full::seed-11",
+      "sympy__sympy-20916::full::seed-11"
+    ],
+    "confidence_interval_method": {
+      "run_rate": "Wilson score, 95%",
+      "task_rate": "deterministic task bootstrap, 2000 samples",
+      "paired_effect": "deterministic matched-pair bootstrap, 2000 samples"
+    },
+    "swebench_reports": [
+      {
+        "path": "evals\\harness\\organic-pilot-5\\deepseek-v4-flash--full--seed-11.organic-pilot-5-win-lf2-full-seed-11.json",
+        "variant": "full",
+        "seed": 11,
+        "sha256": "ad195d2e61f4e7a134b5431140e40784f35bf1c36c9ce011ebaccefc6f997940"
+      }
+    ]
+  },
+  "report": {
+    "total": 5,
+    "total_runs": 5,
+    "unique_tasks": 5,
+    "seeds": [
+      11
+    ],
+    "resolution_finalized_runs": 5,
+    "pending_hidden_runs": 0,
+    "resolved": 3,
+    "resolved_rate": 0.6,
+    "resolved_rate_ci95_wilson": [
+      0.2307,
+      0.8824
+    ],
+    "task_mean_resolved_rate": 0.6,
+    "task_mean_resolved_rate_ci95_bootstrap": [
+      0.2,
+      1.0
+    ],
+    "workflow_completed": 4,
+    "workflow_completion_rate": 0.8,
+    "public_test_pass_rate": 0.8,
+    "test_pass_rate": 0.8,
+    "patch_rate": 0.8,
+    "average_iterations": 0.8,
+    "duration_p50_seconds": 595.281,
+    "duration_p95_seconds": 1800.266,
+    "statuses": {
+      "awaiting_approval": 4,
+      "timeout": 1
+    },
+    "hidden_evaluation_states": {
+      "passed": 3,
+      "not_required": 1,
+      "failed": 1
+    },
+    "failure_categories": {
+      "timeout": 1,
+      "hidden_test_failure": 1
+    },
+    "input_tokens": 19911515,
+    "output_tokens": 160877,
+    "estimated_cost_usd": 2.832658,
+    "repositories": {
+      "https://github.com/pallets/flask.git": 1,
+      "https://github.com/pylint-dev/pylint.git": 1,
+      "https://github.com/pytest-dev/pytest.git": 1,
+      "https://github.com/sphinx-doc/sphinx.git": 1,
+      "https://github.com/sympy/sympy.git": 1
+    },
+    "by_variant": {
+      "full": {
+        "total": 5,
+        "total_runs": 5,
+        "unique_tasks": 5,
+        "seeds": [
+          11
+        ],
+        "resolution_finalized_runs": 5,
+        "pending_hidden_runs": 0,
+        "resolved": 3,
+        "resolved_rate": 0.6,
+        "resolved_rate_ci95_wilson": [
+          0.2307,
+          0.8824
+        ],
+        "task_mean_resolved_rate": 0.6,
+        "task_mean_resolved_rate_ci95_bootstrap": [
+          0.2,
+          1.0
+        ],
+        "workflow_completed": 4,
+        "workflow_completion_rate": 0.8,
+        "public_test_pass_rate": 0.8,
+        "test_pass_rate": 0.8,
+        "patch_rate": 0.8,
+        "average_iterations": 0.8,
+        "duration_p50_seconds": 595.281,
+        "duration_p95_seconds": 1800.266,
+        "statuses": {
+          "awaiting_approval": 4,
+          "timeout": 1
+        },
+        "hidden_evaluation_states": {
+          "passed": 3,
+          "not_required": 1,
+          "failed": 1
+        },
+        "failure_categories": {
+          "timeout": 1,
+          "hidden_test_failure": 1
+        },
+        "input_tokens": 19911515,
+        "output_tokens": 160877,
+        "estimated_cost_usd": 2.832658
+      }
+    },
+    "matched_ablation": {
+      "matched_task_seed_pairs": 0,
+      "by_variant": {},
+      "paired_effects": {}
+    }
+  },
+  "results": [
+    {
+      "run_id": "pallets__flask-5014::full::seed-11",
+      "case_id": "pallets__flask-5014",
+      "task_key": "pallets__flask-5014",
+      "seed": 11,
+      "repository": "https://github.com/pallets/flask.git",
+      "provenance": "swe-bench-verified",
+      "swebench_instance_id": "pallets__flask-5014",
+      "task_id": "23b2395424a2",
+      "status": "awaiting_approval",
+      "workflow_completed": true,
+      "resolved": true,
+      "public_test_exit_code": 0,
+      "test_exit_code": 0,
+      "hidden_evaluation": "passed",
+      "patch_sha256": "e814db804b439fcb6dab24fc287cf2f4ba297f7ef02c81b055809697ccae9190",
+      "model_patch": "diff --git a/CHANGES.rst b/CHANGES.rst\nindex 498d5e5..3abcbd7 100644\n--- a/CHANGES.rst\n+++ b/CHANGES.rst\n@@ -33,6 +33,7 @@ Unreleased\n -   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.\n     :pr:`4947`\n -   Ensure subdomains are applied with nested blueprints. :issue:`4834`\n+-   ``Blueprint`` name may not be empty. :issue:`4944`\n -   ``config.from_file`` can use ``text=False`` to indicate that the parser wants a\n     binary file instead. :issue:`4989`\n \ndiff --git a/src/flask/blueprints.py b/src/flask/blueprints.py\nindex eb50585..1aa8256 100644\n--- a/src/flask/blueprints.py\n+++ b/src/flask/blueprints.py\n@@ -190,6 +190,9 @@ class Blueprint(Scaffold):\n             root_path=root_path,\n         )\n \n+        if not name:\n+            raise ValueError(\"'name' may not be empty.\")\n+\n         if \".\" in name:\n             raise ValueError(\"'name' may not contain a dot '.' character.\")\n \ndiff --git a/tests/test_blueprints.py b/tests/test_blueprints.py\nindex d46b769..1d23c80 100644\n--- a/tests/test_blueprints.py\n+++ b/tests/test_blueprints.py\n@@ -256,6 +256,19 @@ def test_dotted_name_not_allowed(app, client):\n         flask.Blueprint(\"app.ui\", __name__)\n \n \n+def test_empty_name_not_allowed(app, client):\n+    with pytest.raises(ValueError, match=\"may not be empty\"):\n+        flask.Blueprint(\"\", __name__)\n+\n+    with pytest.raises(ValueError, match=\"may not be empty\"):\n+        flask.Blueprint(None, __name__)\n+\n+\n+def test_blueprint_accepts_non_empty_name(app, client):\n+    bp = flask.Blueprint(\"bp\", __name__)\n+    assert bp.name == \"bp\"\n+\n+\n def test_dotted_names_from_app(app, client):\n     test = flask.Blueprint(\"test\", __name__)\n \n",
+      "iterations": 1,
+      "duration_seconds": 267.844,
+      "error": null,
+      "tags": [
+        "organic",
+        "swe-bench-verified",
+        "single-file",
+        "repo:pallets/flask"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 2837256,
+      "output_tokens": 15222,
+      "estimated_cost_usd": 0.401478,
+      "failure_category": null
+    },
+    {
+      "run_id": "pylint-dev__pylint-4551::full::seed-11",
+      "case_id": "pylint-dev__pylint-4551",
+      "task_key": "pylint-dev__pylint-4551",
+      "seed": 11,
+      "repository": "https://github.com/pylint-dev/pylint.git",
+      "provenance": "swe-bench-verified",
+      "swebench_instance_id": "pylint-dev__pylint-4551",
+      "task_id": "b86414b816b0",
+      "status": "timeout",
+      "workflow_completed": false,
+      "resolved": false,
+      "public_test_exit_code": null,
+      "test_exit_code": null,
+      "hidden_evaluation": "not_required",
+      "patch_sha256": null,
+      "model_patch": null,
+      "iterations": 0,
+      "duration_seconds": 1800.266,
+      "error": "benchmark timeout",
+      "tags": [
+        "organic",
+        "swe-bench-verified",
+        "multi-file",
+        "repo:pylint-dev/pylint"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "failure_category": "timeout"
+    },
+    {
+      "run_id": "pytest-dev__pytest-8399::full::seed-11",
+      "case_id": "pytest-dev__pytest-8399",
+      "task_key": "pytest-dev__pytest-8399",
+      "seed": 11,
+      "repository": "https://github.com/pytest-dev/pytest.git",
+      "provenance": "swe-bench-verified",
+      "swebench_instance_id": "pytest-dev__pytest-8399",
+      "task_id": "d99a6c09d585",
+      "status": "awaiting_approval",
+      "workflow_completed": true,
+      "resolved": true,
+      "public_test_exit_code": 0,
+      "test_exit_code": 0,
+      "hidden_evaluation": "passed",
+      "patch_sha256": "3669569a67379f5d9b86c941f654aaca0fcbe796873b2dc85ebd73e92835b2df",
+      "model_patch": "diff --git a/changelog/8382.bugfix.rst b/changelog/8382.bugfix.rst\nnew file mode 100644\nindex 0000000..ebf0721\n--- /dev/null\n+++ b/changelog/8382.bugfix.rst\n@@ -0,0 +1 @@\n+Fixed a regression introduced in 6.2.0 where ``unittest`` fixtures (such as the ``setUpClass``/``setUp`` fixtures generated by pytest) were no longer private: their names no longer start with an underscore, and thus they were shown by ``pytest --fixtures``. They are now hidden again unless ``-v`` is passed.\ndiff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py\nindex 719eb4e..3f88d7a 100644\n--- a/src/_pytest/unittest.py\n+++ b/src/_pytest/unittest.py\n@@ -144,7 +144,7 @@ def _make_xunit_fixture(\n         scope=scope,\n         autouse=True,\n         # Use a unique name to speed up lookup.\n-        name=f\"unittest_{setup_name}_fixture_{obj.__qualname__}\",\n+        name=f\"_unittest_{setup_name}_fixture_{obj.__qualname__}\",\n     )\n     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:\n         if _is_skipped(self):\ndiff --git a/testing/test_unittest.py b/testing/test_unittest.py\nindex 69bafc2..ac95bbf 100644\n--- a/testing/test_unittest.py\n+++ b/testing/test_unittest.py\n@@ -302,6 +302,31 @@ def test_setup_setUpClass(pytester: Pytester) -> None:\n     reprec.assertoutcome(passed=3)\n \n \n+def test_unittest_setupclass_fixture_is_private(pytester: Pytester) -> None:\n+    \"\"\"Generated unittest fixtures (e.g. for ``setUpClass``) should be private\n+    (their names start with ``_``), so they are only shown by\n+    ``pytest --fixtures -v``, not by plain ``pytest --fixtures`` (#8382).\"\"\"\n+    pytester.makepyfile(\n+        \"\"\"\n+        import unittest\n+\n+        class MyTestCase(unittest.TestCase):\n+            @classmethod\n+            def setUpClass(cls):\n+                pass\n+\n+            def test_1(self):\n+                pass\n+        \"\"\"\n+    )\n+\n+    result = pytester.runpytest(\"--fixtures\")\n+    result.stdout.no_fnmatch_line(\"*unittest_setUpClass_fixture*\")\n+\n+    result = pytester.runpytest(\"--fixtures\", \"-v\")\n+    result.stdout.fnmatch_lines([\"*_unittest_setUpClass_fixture_MyTestCase*\"])\n+\n+\n def test_setup_class(pytester: Pytester) -> None:\n     testpath = pytester.makepyfile(\n         \"\"\"\n",
+      "iterations": 1,
+      "duration_seconds": 401.032,
+      "error": null,
+      "tags": [
+        "organic",
+        "swe-bench-verified",
+        "multi-file",
+        "repo:pytest-dev/pytest"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 3997839,
+      "output_tokens": 42326,
+      "estimated_cost_usd": 0.57154874,
+      "failure_category": null
+    },
+    {
+      "run_id": "sphinx-doc__sphinx-8593::full::seed-11",
+      "case_id": "sphinx-doc__sphinx-8593",
+      "task_key": "sphinx-doc__sphinx-8593",
+      "seed": 11,
+      "repository": "https://github.com/sphinx-doc/sphinx.git",
+      "provenance": "swe-bench-verified",
+      "swebench_instance_id": "sphinx-doc__sphinx-8593",
+      "task_id": "728d6927e24b",
+      "status": "awaiting_approval",
+      "workflow_completed": true,
+      "resolved": true,
+      "public_test_exit_code": 0,
+      "test_exit_code": 0,
+      "hidden_evaluation": "passed",
+      "patch_sha256": "e8e7c7897e9ba4f40dc8c49fce0b5bd96b020853124ba268b2fa5d3357a76042",
+      "model_patch": "diff --git a/CHANGES b/CHANGES\nindex 9360f34..b5b92f0 100644\n--- a/CHANGES\n+++ b/CHANGES\n@@ -18,6 +18,7 @@ Bugs fixed\n \n * #741: autodoc: inherited-members doesn't work for instance attributes on super\n   class\n+* #9057: autodoc: The :meta public: does not work for module variables\n \n Testing\n --------\ndiff --git a/sphinx/ext/autodoc/__init__.py b/sphinx/ext/autodoc/__init__.py\nindex 76265f5..8c27474 100644\n--- a/sphinx/ext/autodoc/__init__.py\n+++ b/sphinx/ext/autodoc/__init__.py\n@@ -725,6 +725,8 @@ class Documenter:\n             if isinstance(obj, ObjectMember) and obj.docstring:\n                 # hack for ClassDocumenter to inject docstring via ObjectMember\n                 doc = obj.docstring\n+            elif (namespace, membername) in attr_docs:\n+                doc = '\\n'.join(attr_docs[(namespace, membername)])\n \n             has_doc = bool(doc)\n \ndiff --git a/tests/roots/test-ext-autodoc/target/private.py b/tests/roots/test-ext-autodoc/target/private.py\nindex a39ce08..604e7ab 100644\n--- a/tests/roots/test-ext-autodoc/target/private.py\n+++ b/tests/roots/test-ext-autodoc/target/private.py\n@@ -4,8 +4,13 @@ def private_function(name):\n     :meta private:\n     \"\"\"\n \n+\n def _public_function(name):\n     \"\"\"public_function is a docstring().\n \n     :meta public:\n     \"\"\"\n+\n+\n+_public_module_attr = None  #: :meta public:\n+_private_module_attr = None  #: :meta private:\ndiff --git a/tests/test_ext_autodoc_private_members.py b/tests/test_ext_autodoc_private_members.py\nindex 6bce5ce..3476f5e 100644\n--- a/tests/test_ext_autodoc_private_members.py\n+++ b/tests/test_ext_autodoc_private_members.py\n@@ -30,6 +30,13 @@ def test_private_field(app):\n         '',\n         '   :meta public:',\n         '',\n+        '',\n+        '.. py:data:: _public_module_attr',\n+        '   :module: target.private',\n+        '   :value: None',\n+        '',\n+        '   :meta public:',\n+        '',\n     ]\n \n \n@@ -44,6 +51,13 @@ def test_private_field_and_private_members(app):\n         '.. py:module:: target.private',\n         '',\n         '',\n+        '.. py:data:: _private_module_attr',\n+        '   :module: target.private',\n+        '   :value: None',\n+        '',\n+        '   :meta private:',\n+        '',\n+        '',\n         '.. py:function:: _public_function(name)',\n         '   :module: target.private',\n         '',\n@@ -52,6 +66,13 @@ def test_private_field_and_private_members(app):\n         '   :meta public:',\n         '',\n         '',\n+        '.. py:data:: _public_module_attr',\n+        '   :module: target.private',\n+        '   :value: None',\n+        '',\n+        '   :meta public:',\n+        '',\n+        '',\n         '.. py:function:: private_function(name)',\n         '   :module: target.private',\n         '',\n@@ -80,4 +101,11 @@ def test_private_members(app):\n         '',\n         '   :meta public:',\n         '',\n+        '',\n+        '.. py:data:: _public_module_attr',\n+        '   :module: target.private',\n+        '   :value: None',\n+        '',\n+        '   :meta public:',\n+        '',\n     ]\n",
+      "iterations": 1,
+      "duration_seconds": 649.406,
+      "error": null,
+      "tags": [
+        "organic",
+        "swe-bench-verified",
+        "multi-file",
+        "repo:sphinx-doc/sphinx"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 6934250,
+      "output_tokens": 60188,
+      "estimated_cost_usd": 0.98764764,
+      "failure_category": null
+    },
+    {
+      "run_id": "sympy__sympy-20916::full::seed-11",
+      "case_id": "sympy__sympy-20916",
+      "task_key": "sympy__sympy-20916",
+      "seed": 11,
+      "repository": "https://github.com/sympy/sympy.git",
+      "provenance": "swe-bench-verified",
+      "swebench_instance_id": "sympy__sympy-20916",
+      "task_id": "a1593560a0c4",
+      "status": "awaiting_approval",
+      "workflow_completed": true,
+      "resolved": false,
+      "public_test_exit_code": 0,
+      "test_exit_code": 0,
+      "hidden_evaluation": "failed",
+      "patch_sha256": "a0c3c59b07792374f421ca315119d9825f5ef9b82e5abc04acbb918180132785",
+      "model_patch": "diff --git a/sympy/printing/conventions.py b/sympy/printing/conventions.py\nindex 9a3be6b..60ac23c 100644\n--- a/sympy/printing/conventions.py\n+++ b/sympy/printing/conventions.py\n@@ -7,7 +7,10 @@\n from collections.abc import Iterable\n from sympy import Derivative\n \n-_name_with_digits_p = re.compile(r'^([a-zA-Z]+)([0-9]+)$')\n+# Matches a name made of (unicode) letters followed by digits.  The\n+# trailing digits are treated as a subscript by ``split_super_sub``, e.g.\n+# ``w0``/``omega0``/``ω0`` are all split into a name and the subscript ``0``.\n+_name_with_digits_p = re.compile(r'^([^\\W\\d_]+)([0-9]+)$')\n \n \n def split_super_sub(text):\ndiff --git a/sympy/printing/pretty/tests/test_pretty.py b/sympy/printing/pretty/tests/test_pretty.py\nindex 42fae77..2766f6b 100644\n--- a/sympy/printing/pretty/tests/test_pretty.py\n+++ b/sympy/printing/pretty/tests/test_pretty.py\n@@ -279,6 +279,15 @@ def test_upretty_multiindex():\n     assert upretty( Symbol('F^+-') ) == 'F⁺⁻'\n \n \n+def test_upretty_greek_subscript_digits():\n+    # Symbols whose names contain a unicode Greek letter directly followed\n+    # by digits should print the digits as unicode subscripts too (issue\n+    # reported for pprint, e.g. ``ω0`` should print as ``ω₀``).\n+    assert upretty( Symbol('ω0') ) == 'ω₀'\n+    assert upretty( Symbol('ω12') ) == 'ω₁₂'\n+    assert upretty( Symbol('Ω1') ) == 'Ω₁'\n+\n+\n def test_upretty_sub_super():\n     assert upretty( Symbol('beta_1_2') ) == 'β₁ ₂'\n     assert upretty( Symbol('beta^1^2') ) == 'β¹ ²'\ndiff --git a/sympy/printing/tests/test_conventions.py b/sympy/printing/tests/test_conventions.py\nindex 87689aa..6ca0ba3 100644\n--- a/sympy/printing/tests/test_conventions.py\n+++ b/sympy/printing/tests/test_conventions.py\n@@ -32,6 +32,20 @@ def test_super_sub():\n     assert split_super_sub(\"\") == (\"\", [], [])\n \n \n+def test_super_sub_greek_with_digits():\n+    # Names containing unicode Greek letters directly followed by digits\n+    # should treat the trailing digits as a subscript too (issue reported for\n+    # pprint, e.g. ``ω0`` should print as ``ω₀``).\n+    assert split_super_sub(\"ω0\") == (\"ω\", [], [\"0\"])\n+    assert split_super_sub(\"ω12\") == (\"ω\", [], [\"12\"])\n+    assert split_super_sub(\"α0\") == (\"α\", [], [\"0\"])\n+    assert split_super_sub(\"Γ2\") == (\"Γ\", [], [\"2\"])\n+    assert split_super_sub(\"Ω1_2\") == (\"Ω\", [], [\"1\", \"2\"])\n+    # a name that is a mix of letters and digits should not be interpreted\n+    # as a subscript\n+    assert split_super_sub(\"a1b2\") == (\"a1b2\", [], [])\n+\n+\n def test_requires_partial():\n     x, y, z, t, nu = symbols('x y z t nu')\n     n = symbols('n', integer=True)\n",
+      "iterations": 1,
+      "duration_seconds": 595.281,
+      "error": null,
+      "tags": [
+        "organic",
+        "swe-bench-verified",
+        "single-file",
+        "repo:sympy/sympy"
+      ],
+      "experiment_variant": "full",
+      "input_tokens": 6142170,
+      "output_tokens": 43141,
+      "estimated_cost_usd": 0.87198328,
+      "failure_category": "hidden_test_failure"
+    }
+  ]
+}
