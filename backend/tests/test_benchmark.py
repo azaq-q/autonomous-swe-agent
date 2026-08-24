@@ -9,9 +9,12 @@ from app.evals.benchmark import (
     BenchmarkCase,
     BenchmarkResult,
     BenchmarkRunner,
+    apply_swebench_report,
     build_report,
+    expand_runs,
     load_cases,
 )
+from app.models.task import ExperimentVariant
 
 
 def _case():
@@ -102,3 +105,133 @@ def test_load_cases_rejects_duplicate_ids(tmp_path: Path):
 
     with pytest.raises(ValueError, match="case_id 重复"):
         load_cases(dataset)
+
+
+def test_hidden_evaluation_is_pending_until_official_report():
+    case = _case().model_copy(
+        update={
+            "requires_hidden_evaluation": True,
+            "swebench_instance_id": "owner__repo-1",
+            "provenance": "swe-bench-lite",
+        }
+    )
+
+    def handler(request):
+        if request.method == "POST":
+            assert request.read()
+            return httpx.Response(200, json={"task_id": "abc", "status": "pending"})
+        if request.url.path.endswith("/artifacts/patch"):
+            return httpx.Response(200, text="diff --git a/a.py b/a.py\n")
+        return httpx.Response(
+            200,
+            json={
+                "task_id": "abc",
+                "status": "awaiting_approval",
+                "artifact_sha256": "b" * 64,
+                "artifact_url": "/api/v1/tasks/abc/artifacts/patch",
+                "result": {"test_exit_code": 0, "iterations": 1},
+                "error": None,
+            },
+        )
+
+    client = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+    result = BenchmarkRunner(client=client, poll_interval=0, sleep=lambda _: None).run_case(
+        case, seed=7
+    )
+
+    assert result.workflow_completed is True
+    assert result.resolved is False
+    assert result.hidden_evaluation == "pending"
+    assert result.failure_category == "pending_hidden_evaluation"
+    assert result.model_patch.startswith("diff --git")
+
+    [finalized] = apply_swebench_report(
+        [result], {"resolved_ids": ["owner__repo-1"], "unresolved_ids": []}
+    )
+    assert finalized.resolved is True
+    assert finalized.hidden_evaluation == "passed"
+
+
+def test_expand_runs_and_strict_matched_ablation():
+    case = _case().model_copy(update={"task_key": "shared-task"})
+    variants = [ExperimentVariant.FULL, ExperimentVariant.NO_RAG]
+    runs = expand_runs([case], seeds=[1, 2, 3], variants=variants)
+    assert len(runs) == 6
+
+    results = []
+    for _, variant, seed in runs:
+        results.append(
+            BenchmarkResult(
+                run_id=f"run-{variant.value}-{seed}",
+                case_id="bug-1",
+                task_key="shared-task",
+                seed=seed,
+                status="done",
+                workflow_completed=True,
+                resolved=variant == ExperimentVariant.FULL or seed != 3,
+                public_test_exit_code=0,
+                duration_seconds=seed,
+                experiment_variant=variant.value,
+            )
+        )
+    report = build_report(results)
+    matched = report["matched_ablation"]
+    assert matched["matched_task_seed_pairs"] == 3
+    assert matched["paired_effects"]["no_rag"]["matched_runs"] == 3
+    assert report["resolved_rate_ci95_wilson"][0] < report["resolved_rate"]
+
+
+def test_swebench_report_requires_cohort_for_repeated_instance():
+    results = [
+        BenchmarkResult(
+            case_id="a",
+            task_key="a",
+            seed=seed,
+            status="done",
+            resolved=False,
+            duration_seconds=1,
+            swebench_instance_id="owner__repo-1",
+            hidden_evaluation="pending",
+        )
+        for seed in (1, 2)
+    ]
+    report = {"resolved_ids": ["owner__repo-1"], "unresolved_ids": []}
+    with pytest.raises(ValueError, match="variant/seed cohort"):
+        apply_swebench_report(results, report)
+
+    updated = apply_swebench_report(results, report, variant="full", seed=1)
+    assert [result.hidden_evaluation for result in updated] == ["passed", "pending"]
+
+
+def test_empty_generated_patch_is_a_final_failure():
+    case = _case().model_copy(
+        update={
+            "requires_hidden_evaluation": True,
+            "swebench_instance_id": "owner__repo-1",
+        }
+    )
+
+    def handler(request):
+        if request.method == "POST":
+            return httpx.Response(200, json={"task_id": "abc", "status": "pending"})
+        if request.url.path.endswith("/artifacts/patch"):
+            return httpx.Response(200, text="")
+        return httpx.Response(
+            200,
+            json={
+                "task_id": "abc",
+                "status": "awaiting_approval",
+                "artifact_sha256": "e" * 64,
+                "artifact_url": "/api/v1/tasks/abc/artifacts/patch",
+                "result": {"test_exit_code": 0},
+                "error": None,
+            },
+        )
+
+    client = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+    result = BenchmarkRunner(client=client, poll_interval=0, sleep=lambda _: None).run_case(
+        case
+    )
+    assert result.hidden_evaluation == "failed"
+    assert result.failure_category == "no_patch"
+    assert build_report([result])["pending_hidden_runs"] == 0

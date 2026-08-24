@@ -55,22 +55,41 @@ class WorkspaceManager:
 
         if repository:
             source = self._validate_repository(repository)
-            self._run(
-                [
-                    "git",
-                    "clone",
-                    "--no-tags",
-                    "--depth",
-                    "1",
-                    "--branch",
-                    base_branch,
-                    "--",
-                    source,
-                    str(target),
-                ],
-                cwd=self.root,
-                timeout=180,
-            )
+            if expected_commit:
+                target.mkdir(parents=True, exist_ok=True)
+                self._run(["git", "init", "-q", target.name], cwd=self.root)
+                self._run(["git", "remote", "add", "origin", source], cwd=target)
+                self._run(
+                    [
+                        "git",
+                        "fetch",
+                        "--no-tags",
+                        "--depth",
+                        "1",
+                        "origin",
+                        expected_commit,
+                    ],
+                    cwd=target,
+                    timeout=180,
+                )
+                self._run(["git", "checkout", "--detach", expected_commit], cwd=target)
+            else:
+                self._run(
+                    [
+                        "git",
+                        "clone",
+                        "--no-tags",
+                        "--depth",
+                        "1",
+                        "--branch",
+                        base_branch,
+                        "--",
+                        source,
+                        str(target),
+                    ],
+                    cwd=self.root,
+                    timeout=180,
+                )
         else:
             target.mkdir(parents=True, exist_ok=True)
             self._run(["git", "init", "-q", "--initial-branch", base_branch], cwd=target)
@@ -84,14 +103,6 @@ class WorkspaceManager:
         self._configure_local_excludes(target)
 
         base_commit = self._run(["git", "rev-parse", "HEAD"], cwd=target).strip()
-        if repository and expected_commit and base_commit.lower() != expected_commit.lower():
-            self._run(
-                ["git", "fetch", "--no-tags", "--depth", "1", "origin", expected_commit],
-                cwd=target,
-                timeout=180,
-            )
-            self._run(["git", "checkout", "--detach", expected_commit], cwd=target)
-            base_commit = self._run(["git", "rev-parse", "HEAD"], cwd=target).strip()
         if expected_commit and base_commit.lower() != expected_commit.lower():
             raise ValueError(
                 f"仓库 HEAD 与固定提交不一致：expected={expected_commit}, actual={base_commit}"

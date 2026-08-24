@@ -76,6 +76,17 @@ def test_prepare_fetches_pinned_historical_commit(tmp_path):
     assert (workspace.path / "app.py").read_text(encoding="utf-8") == "answer = 41\n"
 
 
+def test_pinned_commit_does_not_require_declared_branch_to_exist(tmp_path):
+    source = _source_repository(tmp_path)
+    commit = _git(source, "rev-parse", "HEAD")
+
+    workspace = _manager(tmp_path).prepare(
+        "abcdef123456", str(source), "branch-that-does-not-exist", commit
+    )
+
+    assert workspace.base_commit == commit
+
+
 def test_prepare_locally_ignores_python_test_artifacts(tmp_path):
     workspace = _manager(tmp_path).prepare("abcdef123456", None, "main")
     cache = workspace.path / "package" / "__pycache__"

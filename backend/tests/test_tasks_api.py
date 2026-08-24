@@ -37,6 +37,7 @@ def api(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(task_routes, "revoke_task", lambda dispatch_id: None)
     monkeypatch.setattr(task_routes, "emit_task_event", lambda *args, **kwargs: None)
+    monkeypatch.setattr(task_routes, "SessionLocal", testing_session)
     application = create_app()
     application.dependency_overrides[get_db] = override_db
     with TestClient(application) as client:
@@ -54,6 +55,7 @@ def _create(client):
             "test_command": "pytest -q",
             "max_iterations": 2,
             "experiment_variant": "no_rag",
+            "random_seed": 42,
         },
     )
     assert response.status_code == 200
@@ -66,6 +68,7 @@ def test_create_get_and_filter_tasks(api):
     assert created["source_commit"] == "a" * 40
     assert created["attempt"] == 0
     assert created["experiment_variant"] == "no_rag"
+    assert created["random_seed"] == 42
 
     response = client.get(f"/api/v1/tasks/{created['task_id']}")
     assert response.status_code == 200
@@ -111,3 +114,26 @@ def test_cancel_pending_task_is_idempotent(api):
     second = client.post(url)
     assert first.json()["status"] == "cancelled"
     assert second.json()["status"] == "cancelled"
+
+
+def test_stream_lookup_closes_its_short_lived_session(monkeypatch):
+    closed = False
+
+    class Query:
+        def filter(self, *_args):
+            return self
+
+        def scalar(self):
+            return 7
+
+    class FakeSession:
+        def query(self, *_args):
+            return Query()
+
+        def close(self):
+            nonlocal closed
+            closed = True
+
+    monkeypatch.setattr(task_routes, "SessionLocal", FakeSession)
+    assert task_routes._lookup_task_database_id("abc") == 7
+    assert closed is True

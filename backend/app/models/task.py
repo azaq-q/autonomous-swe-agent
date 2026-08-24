@@ -49,6 +49,7 @@ class Task(Base):
     test_command: Mapped[str] = mapped_column(Text, default="pytest")
     max_iterations: Mapped[int] = mapped_column(Integer, default=3)
     experiment_variant: Mapped[str] = mapped_column(String(32), default="full")
+    random_seed: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(32), default=TaskStatus.PENDING.value)
     steps: Mapped[list] = mapped_column(JSON, default=list)
     result: Mapped[dict] = mapped_column(JSON, default=dict)
