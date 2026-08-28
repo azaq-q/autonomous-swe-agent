@@ -13,7 +13,9 @@ def emit_task_event(task_id: str, event_type: str, payload: dict | None = None) 
         if task is None:
             return
         db.add(TaskEvent(task_id=task.id, event_type=event_type, payload=payload))
-        if event_type == "llm.usage":
+        if event_type == "llm.call":
+            task.llm_calls += int(payload.get("llm_calls") or 1)
+        elif event_type == "llm.usage":
             input_tokens = int(payload.get("input_tokens") or 0)
             output_tokens = int(payload.get("output_tokens") or 0)
             settings = get_settings()

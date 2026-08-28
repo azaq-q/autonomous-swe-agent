@@ -67,6 +67,32 @@ def test_run_case_until_awaiting_approval():
     assert result.iterations == 2
 
 
+def test_timeout_preserves_live_usage_and_cost_from_cancel_response():
+    def handler(request):
+        if request.url.path.endswith("/cancel"):
+            return httpx.Response(
+                200,
+                json={
+                    "task_id": "abc",
+                    "status": "planning",
+                    "input_tokens": 123,
+                    "output_tokens": 45,
+                    "llm_calls": 7,
+                    "estimated_cost_usd": 0.067,
+                },
+            )
+        return httpx.Response(200, json={"task_id": "abc", "status": "pending"})
+
+    client = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+    result = BenchmarkRunner(client=client, timeout=0).run_case(_case())
+
+    assert result.status == "timeout"
+    assert result.input_tokens == 123
+    assert result.output_tokens == 45
+    assert result.llm_calls == 7
+    assert result.estimated_cost_usd == 0.067
+
+
 def test_build_report():
     results = [
         BenchmarkResult(
@@ -80,6 +106,7 @@ def test_build_report():
             experiment_variant="full",
             input_tokens=100,
             output_tokens=20,
+            llm_calls=3,
             estimated_cost_usd=0.1,
         ),
         BenchmarkResult(
@@ -99,6 +126,7 @@ def test_build_report():
     assert report["average_iterations"] == 2
     assert report["duration_p95_seconds"] == 10
     assert report["input_tokens"] == 100
+    assert report["llm_calls"] == 3
     assert report["estimated_cost_usd"] == 0.1
     assert report["by_variant"]["full"]["resolved_rate"] == 1.0
     assert report["by_variant"]["single_agent"]["failure_categories"] == {

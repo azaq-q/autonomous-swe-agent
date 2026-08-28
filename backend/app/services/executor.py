@@ -7,13 +7,14 @@ from contextlib import nullcontext
 from langgraph.checkpoint.sqlite import SqliteSaver
 from sqlalchemy.orm.attributes import flag_modified
 
+from app.core.budget import LLMBudgetLimits
 from app.core.config import get_settings
 from app.core.llm import llm_seed_scope
 from app.db.session import SessionLocal
 from app.models.task import Execution, ExperimentVariant, Task, TaskStatus
 from app.rag.context import repository_index_scope
 from app.sandbox import get_sandbox, sandbox_scope
-from app.services.errors import TaskCancelledError
+from app.services.errors import TaskBudgetExceededError, TaskCancelledError
 from app.services.events import emit_task_event
 from app.services.workspace import WorkspaceManager
 
@@ -34,6 +35,24 @@ def execute_task(task_id: str, propagate: bool = False) -> None:
     except TaskCancelledError:
         _mark_cancelled(task_id)
         emit_task_event(task_id, "task.cancelled", {})
+        if propagate:
+            raise
+    except TaskBudgetExceededError as exc:
+        db = SessionLocal()
+        try:
+            task = db.query(Task).filter(Task.task_id == task_id).first()
+            if task is not None:
+                task.status = TaskStatus.FAILED.value
+                task.error = str(exc)
+                db.commit()
+        finally:
+            db.close()
+        emit_task_event(
+            task_id,
+            "task.budget_exhausted",
+            {"kind": exc.kind, "used": exc.used, "limit": exc.limit},
+        )
+        emit_task_event(task_id, "task.failed", {"error": str(exc)})
         if propagate:
             raise
     except Exception as exc:
@@ -207,6 +226,16 @@ def _execute_real(task_id: str) -> None:
                             task_id, event, payload
                         ),
                         experiment_variant=task.experiment_variant,
+                        budget_limits=LLMBudgetLimits(
+                            max_input_tokens=task.max_input_tokens,
+                            max_output_tokens=task.max_output_tokens,
+                            max_llm_calls=task.max_llm_calls,
+                            max_cost_usd=task.max_cost_usd,
+                        ),
+                        initial_input_tokens=task.input_tokens,
+                        initial_output_tokens=task.output_tokens,
+                        initial_llm_calls=task.llm_calls,
+                        initial_estimated_cost_usd=task.estimated_cost_usd,
                     )
                     result = orchestrator.run(
                         effective_prompt,

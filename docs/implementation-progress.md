@@ -57,7 +57,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | 配置 | `core/config.py` | pydantic-settings 配置（数据库/Redis/LLM/沙箱/workdir） |
 | LLM | `core/llm.py` | 多模型工厂（OpenAI 兼容含 DeepSeek / Anthropic） |
 | 应用入口 | `main.py` | FastAPI 工厂，注册路由 + CORS + 启动建表（init_db） |
-| 任务 API | `api/routes/tasks.py` | 任务创建/列表/查询/审批/patch 下载，支持仓库、分支、测试命令和重试预算 |
+| 任务 API | `api/routes/tasks.py` | 任务创建/列表/查询/审批/patch 下载，支持仓库、分支、测试命令、重试与 LLM 资源预算 |
 | 任务执行器 | `services/executor.py` | 后台执行任务：无 LLM key 走 mock，有则走编排 |
 | 健康检查 | `api/routes/health.py` | `GET /health` |
 
@@ -131,7 +131,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 | 真实 LLM 编排 | 无 API Key 时走 mock 模式，配置 key 后走 LangGraph 编排 | 中 |
 | Chat 流式生成 | Task Timeline 已接 SSE 事件；Chat 页面模型内容流式生成待接 | 中 |
 | Checkpoint 运维 | LangGraph SQLite checkpoint 与崩溃续跑已接入；多 Worker 共享 checkpoint store 与清理策略待补 | 中 |
-| Organic 评测执行 | 5题 × Full × seed 11 pilot 与官方 harness 已完成（3/5 resolved），并发现单题预算、超时成本遗漏和 Windows harness 换行兼容问题；完整360次运行仍待预算 | 中 |
+| Organic 评测执行 | 5题 pilot 与官方 harness 已完成（3/5 resolved）；逐调用硬预算和 timeout 成本归集已修复，完整360次运行仍待批准预算 | 中 |
 | Celery 运维完善 | 已支持 Celery 分发、重试与取消；监控、死信和多 Worker 压测待补 | 中 |
 | next 安全升级 | 需升级至 next 16 + React 19（breaking change） | 低 |
 
@@ -144,7 +144,7 @@ Autonomous SWE Agent 是一个面向软件工程任务的自主 AI Agent 原型�
 > 详细分步操作见 [本地环境安装与运行步骤](./local-setup.md)。
 
 ```powershell
-# 1. 后端（93 passed, 1 skipped；首次启动自动建表）
+# 1. 后端（100 passed, 1 skipped；首次启动自动建表）
 cd backend
 uv sync
 uv run pytest -q
@@ -170,7 +170,7 @@ docker compose up -d
 
 ## 6. 下一步计划
 
-1. 先修复单题 token/调用预算和 timeout 成本归集，再按批准预算执行360次 SWE-bench Verified matched runs
+1. 按批准预算执行360次 SWE-bench Verified matched runs，并导入12份官方 harness 报告
 2. 在大型 organic 仓库完成 chunk 级标注、reranker 对照与重复查询置信区间
 3. 增加 Celery 监控、死信处理与多 Worker 并发压测
 4. Chat 页面接入模型内容流式生成

@@ -50,8 +50,17 @@ uv run python -m app.evals.benchmark `
   --variants full,single_agent,no_rag,no_review `
   --seeds 11,22,33 `
   --max-total-cost-usd <approved-budget> `
+  --max-task-llm-calls 128 `
+  --max-task-input-tokens 8000000 `
+  --max-task-output-tokens 250000 `
+  --max-task-cost-usd 2 `
   --resume
 ```
+
+Task limits are enforced around every provider call, including calls inside the
+Coding ReAct loop. Completed-call usage is persisted immediately. A wall-clock
+timeout copies the live counters returned by task cancellation into the
+benchmark result, so timed-out work contributes to the batch budget.
 
 The runner produces one official predictions file per cohort, for example
 `full-seed-11.jsonl`. Each row contains only `instance_id`, model identifier,

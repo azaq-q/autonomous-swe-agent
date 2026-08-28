@@ -20,7 +20,7 @@
 
 ## 已实现
 
-- FastAPI + SQLAlchemy 任务 API，支持仓库元数据、测试命令和最大迭代次数
+- FastAPI + SQLAlchemy 任务 API，支持仓库元数据、测试命令和持久化资源预算
 - 每任务独立 clone/workspace，固定基础提交并创建 `codex/<task_id>` 工作分支
 - 导出包含新增文件的 binary patch，记录 SHA-256 并通过受限 API 下载
 - LangGraph 显式工作流，依据测试退出码重试，达到预算后可靠失败
@@ -34,7 +34,7 @@
 - LangGraph SQLite checkpoint、崩溃续跑与协作式任务取消
 - 结构化 Review，可自动返工；人工批准/返工记录写入审计表
 - 审批后独立发布任务执行 commit、幂等 push 和 GitHub Draft PR
-- append-only 执行事件、SSE 实时轨迹、token 与可配置成本统计
+- append-only 执行事件、SSE 实时轨迹、逐调用 token/成本统计与硬预算
 - Tree-sitter 多语言 AST 分块、FastEmbed/OpenAI-compatible Embedding、BM25/向量 RRF
 - pgvector 代码块持久化、HNSW 余弦索引与内容寻址缓存失效
 - 固定源 commit 的 JSONL benchmark runner 与可复现指标报告
@@ -70,10 +70,10 @@ Review 与人工审批分别持久化，发布操作可重试且不会重复创�
 
 | 能力 | 当前证据 |
 | --- | --- |
-| 可靠性 | 有限重试、checkpoint 恢复、协作式取消、幂等发布 |
+| 可靠性 | 有限重试、逐调用预算、checkpoint 恢复、协作式取消、幂等发布 |
 | 安全性 | workspace 路径边界、符号链接逃逸测试、Docker 断网与资源限制 |
-| 可观测性 | append-only 事件、SSE 轨迹、token/成本统计 |
-| 质量 | Ruff、92 passed / 1 skipped、SQLite/PostgreSQL 全量迁移、前端生产构建 |
+| 可观测性 | append-only 事件、SSE 轨迹、LLM 调用/token/成本统计 |
+| 质量 | Ruff、100 passed / 1 skipped、SQLite/PostgreSQL 全量迁移、前端生产构建 |
 | 检索 | 20 条语义集：Neural Recall@1 55%、Recall@5 95%、MRR 0.6917 |
 | 部署 | 非 root 前后端镜像、PostgreSQL/Redis/Worker 演示 Compose |
 

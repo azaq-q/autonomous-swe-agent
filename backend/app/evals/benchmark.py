@@ -31,6 +31,10 @@ class BenchmarkCase(BaseModel):
     prompt: str
     test_command: str
     max_iterations: int = Field(default=3, ge=1, le=10)
+    max_input_tokens: int | None = Field(default=None, ge=1)
+    max_output_tokens: int | None = Field(default=None, ge=1)
+    max_llm_calls: int | None = Field(default=None, ge=1)
+    max_cost_usd: float | None = Field(default=None, gt=0)
     tags: list[str] = Field(default_factory=list)
     experiment_variant: ExperimentVariant = ExperimentVariant.FULL
     provenance: Literal[
@@ -76,6 +80,7 @@ class BenchmarkResult(BaseModel):
     experiment_variant: str = ExperimentVariant.FULL.value
     input_tokens: int = 0
     output_tokens: int = 0
+    llm_calls: int = 0
     estimated_cost_usd: float = 0.0
     failure_category: str | None = None
 
@@ -89,12 +94,20 @@ class BenchmarkRunner:
         timeout: float = 1_800,
         sleep: Callable[[float], None] = time.sleep,
         max_total_cost_usd: float | None = None,
+        max_task_input_tokens: int | None = None,
+        max_task_output_tokens: int | None = None,
+        max_task_llm_calls: int | None = None,
+        max_task_cost_usd: float | None = None,
     ) -> None:
         self.client = client or httpx.Client(base_url=base_url, timeout=30)
         self.poll_interval = poll_interval
         self.timeout = timeout
         self.sleep = sleep
         self.max_total_cost_usd = max_total_cost_usd
+        self.max_task_input_tokens = max_task_input_tokens
+        self.max_task_output_tokens = max_task_output_tokens
+        self.max_task_llm_calls = max_task_llm_calls
+        self.max_task_cost_usd = max_task_cost_usd
 
     def run_case(
         self,
@@ -106,18 +119,25 @@ class BenchmarkRunner:
         selected_variant = variant or case.experiment_variant
         run_id = make_run_id(case, selected_variant, seed)
         started = time.monotonic()
+        task_payload = {
+            "prompt": case.prompt,
+            "repository": case.repository,
+            "source_commit": case.source_commit,
+            "base_branch": case.base_branch,
+            "test_command": case.test_command,
+            "max_iterations": case.max_iterations,
+            "experiment_variant": selected_variant.value,
+            "random_seed": seed,
+            "max_input_tokens": self.max_task_input_tokens
+            or case.max_input_tokens,
+            "max_output_tokens": self.max_task_output_tokens
+            or case.max_output_tokens,
+            "max_llm_calls": self.max_task_llm_calls or case.max_llm_calls,
+            "max_cost_usd": self.max_task_cost_usd or case.max_cost_usd,
+        }
         response = self.client.post(
             "/api/v1/tasks",
-            json={
-                "prompt": case.prompt,
-                "repository": case.repository,
-                "source_commit": case.source_commit,
-                "base_branch": case.base_branch,
-                "test_command": case.test_command,
-                "max_iterations": case.max_iterations,
-                "experiment_variant": selected_variant.value,
-                "random_seed": seed,
-            },
+            json={key: value for key, value in task_payload.items() if value is not None},
         )
         response.raise_for_status()
         task = response.json()
@@ -125,7 +145,9 @@ class BenchmarkRunner:
 
         while task["status"] not in TERMINAL_STATUSES:
             if time.monotonic() - started >= self.timeout:
-                self.client.post(f"/api/v1/tasks/{task_id}/cancel")
+                cancel_response = self.client.post(f"/api/v1/tasks/{task_id}/cancel")
+                if cancel_response.is_success:
+                    task = cancel_response.json()
                 return self._result(
                     case,
                     run_id=run_id,
@@ -135,6 +157,10 @@ class BenchmarkRunner:
                     status="timeout",
                     duration=time.monotonic() - started,
                     error="benchmark timeout",
+                    input_tokens=int(task.get("input_tokens") or 0),
+                    output_tokens=int(task.get("output_tokens") or 0),
+                    llm_calls=int(task.get("llm_calls") or 0),
+                    estimated_cost_usd=float(task.get("estimated_cost_usd") or 0),
                     failure_category="timeout",
                 )
             self.sleep(self.poll_interval)
@@ -197,6 +223,7 @@ class BenchmarkRunner:
             error=error,
             input_tokens=int(task.get("input_tokens") or 0),
             output_tokens=int(task.get("output_tokens") or 0),
+            llm_calls=int(task.get("llm_calls") or 0),
             estimated_cost_usd=float(task.get("estimated_cost_usd") or 0),
             failure_category=failure_category,
         )
@@ -221,6 +248,7 @@ class BenchmarkRunner:
         error: str | None = None,
         input_tokens: int = 0,
         output_tokens: int = 0,
+        llm_calls: int = 0,
         estimated_cost_usd: float = 0.0,
         failure_category: str | None = None,
     ) -> BenchmarkResult:
@@ -248,6 +276,7 @@ class BenchmarkRunner:
             experiment_variant=variant.value,
             input_tokens=input_tokens,
             output_tokens=output_tokens,
+            llm_calls=llm_calls,
             estimated_cost_usd=round(estimated_cost_usd, 8),
             failure_category=failure_category,
         )
@@ -305,6 +334,8 @@ def _classify_failure(
     if status == "timeout":
         return "timeout"
     message = (error or "").lower()
+    if "budget exhausted" in message:
+        return "budget_exhausted"
     if any(word in message for word in ("clone", "workspace", "仓库", "工作目录")):
         return "repository_setup"
     if test_exit_code not in (None, 0):
@@ -440,6 +471,7 @@ def _summarize(results: list[BenchmarkResult]) -> dict:
         "failure_categories": dict(failures),
         "input_tokens": sum(result.input_tokens for result in results),
         "output_tokens": sum(result.output_tokens for result in results),
+        "llm_calls": sum(result.llm_calls for result in results),
         "estimated_cost_usd": round(sum(r.estimated_cost_usd for r in results), 6),
     }
 
@@ -668,6 +700,10 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=Path("benchmark-results.json"))
     parser.add_argument("--model", default="unknown")
     parser.add_argument("--max-total-cost-usd", type=float)
+    parser.add_argument("--max-task-input-tokens", type=int)
+    parser.add_argument("--max-task-output-tokens", type=int)
+    parser.add_argument("--max-task-llm-calls", type=int)
+    parser.add_argument("--max-task-cost-usd", type=float)
     parser.add_argument("--input-cost-per-million", type=float, default=0.0)
     parser.add_argument("--output-cost-per-million", type=float, default=0.0)
     parser.add_argument("--seeds", default="0", help="comma-separated repeat seeds")
@@ -702,6 +738,12 @@ def main() -> None:
         "model": args.model,
         "input_cost_per_million": args.input_cost_per_million,
         "output_cost_per_million": args.output_cost_per_million,
+        "task_budget_overrides": {
+            "max_input_tokens": args.max_task_input_tokens,
+            "max_output_tokens": args.max_task_output_tokens,
+            "max_llm_calls": args.max_task_llm_calls,
+            "max_cost_usd": args.max_task_cost_usd,
+        },
         "selected_case_ids": [case.case_id for case in all_cases],
         "seeds": seeds,
         "variants": [variant.value for variant in variants] if variants else None,
@@ -723,7 +765,14 @@ def main() -> None:
         results = [BenchmarkResult.model_validate(item) for item in previous["results"]]
 
     completed = {result.run_id for result in results}
-    runner = BenchmarkRunner(base_url=args.base_url, max_total_cost_usd=args.max_total_cost_usd)
+    runner = BenchmarkRunner(
+        base_url=args.base_url,
+        max_total_cost_usd=args.max_total_cost_usd,
+        max_task_input_tokens=args.max_task_input_tokens,
+        max_task_output_tokens=args.max_task_output_tokens,
+        max_task_llm_calls=args.max_task_llm_calls,
+        max_task_cost_usd=args.max_task_cost_usd,
+    )
     for case, variant, seed in runs:
         run_id = make_run_id(case, variant, seed)
         if run_id in completed:

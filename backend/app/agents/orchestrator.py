@@ -13,6 +13,8 @@ from app.agents.planner import PlannerAgent
 from app.agents.review import ReviewAgent
 from app.agents.state import AgentState, TaskStatus
 from app.agents.testing import TestingAgent
+from app.core.budget import LLMBudgetLedger, LLMBudgetLimits
+from app.core.config import get_settings
 from app.core.usage import sum_message_usage
 from app.models.task import ExperimentVariant
 from app.sandbox import get_sandbox
@@ -31,6 +33,11 @@ class Orchestrator:
         review: Any | None = None,
         on_event: Callable[[str, dict], None] | None = None,
         experiment_variant: str = ExperimentVariant.FULL.value,
+        budget_limits: LLMBudgetLimits | None = None,
+        initial_input_tokens: int = 0,
+        initial_output_tokens: int = 0,
+        initial_llm_calls: int = 0,
+        initial_estimated_cost_usd: float = 0.0,
     ) -> None:
         self.experiment_variant = ExperimentVariant(experiment_variant)
         self.planner = planner or PlannerAgent()
@@ -42,6 +49,23 @@ class Orchestrator:
         self.checkpointer = checkpointer
         self.should_cancel = should_cancel or (lambda: False)
         self.on_event = on_event or (lambda _event, _payload: None)
+        settings = get_settings()
+        self.budget = LLMBudgetLedger(
+            budget_limits
+            or LLMBudgetLimits(
+                max_input_tokens=settings.task_max_input_tokens,
+                max_output_tokens=settings.task_max_output_tokens,
+                max_llm_calls=settings.task_max_llm_calls,
+                max_cost_usd=settings.task_max_cost_usd,
+            ),
+            on_event=self.on_event,
+            input_cost_per_million=settings.model_input_cost_per_million,
+            output_cost_per_million=settings.model_output_cost_per_million,
+            input_tokens=initial_input_tokens,
+            output_tokens=initial_output_tokens,
+            llm_calls=initial_llm_calls,
+            estimated_cost_usd=initial_estimated_cost_usd,
+        )
         self.graph = self._build_graph()
 
     def _build_graph(self):
@@ -114,8 +138,14 @@ class Orchestrator:
     def _plan_node(self, state: AgentState) -> dict:
         self._guard_cancelled()
         self.on_event("agent.started", {"agent": "planner"})
-        plan = self.planner.plan(state["task"])
-        self._record_usage("planner", getattr(self.planner, "last_usage", {}))
+        if isinstance(self.planner, PlannerAgent):
+            plan = self.planner.plan(
+                state["task"], callbacks=[self.budget.callback("planner")]
+            )
+        else:
+            self.budget.before_call("planner")
+            plan = self.planner.plan(state["task"])
+            self._record_usage("planner", getattr(self.planner, "last_usage", {}))
         self.on_event("agent.completed", {"agent": "planner", "steps": len(plan)})
         return {"plan": plan, "status": TaskStatus.PLANNING.value}
 
@@ -137,9 +167,16 @@ class Orchestrator:
                 for issue in review.get("issues", [])
             )
             task += f"\n\n上一轮 Review 要求修改：\n{issues or review.get('summary', '')}"
-        result = self.coding.run(task)
+        if isinstance(self.coding, CodingAgent):
+            result = self.coding.run(
+                task, callbacks=[self.budget.callback("coding")]
+            )
+        else:
+            self.budget.before_call("coding")
+            result = self.coding.run(task)
         messages = result.get("messages", [])
-        self._record_usage("coding", sum_message_usage(messages))
+        if not isinstance(self.coding, CodingAgent):
+            self._record_usage("coding", sum_message_usage(messages))
         self.on_event("agent.completed", {"agent": "coding"})
         return {
             "messages": messages,
@@ -170,12 +207,23 @@ class Orchestrator:
         sandbox = get_sandbox()
         sandbox.run("git add -N -- .")
         diff = sandbox.run("git diff --no-ext-diff HEAD --").stdout
-        review = self.review.review(diff) if diff.strip() else {
-            "verdict": "request_changes",
-            "summary": "没有检测到代码变更",
-            "issues": [{"severity": "high", "message": "任务没有产生可审查的补丁"}],
-        }
-        self._record_usage("review", getattr(self.review, "last_usage", {}))
+        if diff.strip():
+            if isinstance(self.review, ReviewAgent):
+                review = self.review.review(
+                    diff, callbacks=[self.budget.callback("review")]
+                )
+            else:
+                self.budget.before_call("review")
+                review = self.review.review(diff)
+                self._record_usage("review", getattr(self.review, "last_usage", {}))
+        else:
+            review = {
+                "verdict": "request_changes",
+                "summary": "没有检测到代码变更",
+                "issues": [
+                    {"severity": "high", "message": "任务没有产生可审查的补丁"}
+                ],
+            }
         self.on_event(
             "agent.completed",
             {"agent": "review", "verdict": review["verdict"]},
@@ -205,13 +253,13 @@ class Orchestrator:
             raise TaskCancelledError("任务已被用户取消")
 
     def _record_usage(self, agent: str, usage: dict) -> None:
-        payload = {
-            "agent": agent,
-            "input_tokens": int(usage.get("input_tokens") or 0),
-            "output_tokens": int(usage.get("output_tokens") or 0),
-        }
-        if payload["input_tokens"] or payload["output_tokens"]:
-            self.on_event("llm.usage", payload)
+        self.budget.record_usage(
+            agent,
+            {
+                "input_tokens": int(usage.get("input_tokens") or 0),
+                "output_tokens": int(usage.get("output_tokens") or 0),
+            },
+        )
 
     # ---- 条件边 ----
 

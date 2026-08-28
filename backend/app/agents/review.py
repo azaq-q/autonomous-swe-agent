@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Literal
+from typing import Any, Literal
 
 from langchain_core.language_models.chat_models import BaseChatModel
 from pydantic import BaseModel, Field
@@ -39,12 +39,13 @@ class ReviewAgent:
         self.llm = llm or get_llm()
         self.last_usage = {"input_tokens": 0, "output_tokens": 0}
 
-    def review(self, diff: str) -> dict:
+    def review(self, diff: str, callbacks: list[Any] | None = None) -> dict:
         messages = [
             ("system", REVIEW_PROMPT),
             ("user", f"请审查以下代码变更：\n{diff}"),
         ]
-        resp = self.llm.invoke(messages)
+        config = {"callbacks": callbacks} if callbacks else None
+        resp = self.llm.invoke(messages, config=config)
         self.last_usage = extract_usage(resp)
         return self._parse(str(resp.content)).model_dump()
 

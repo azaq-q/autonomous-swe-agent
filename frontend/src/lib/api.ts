@@ -11,6 +11,10 @@ export type Task = {
   source_commit?: string | null;
   test_command: string;
   max_iterations: number;
+  max_input_tokens: number;
+  max_output_tokens: number;
+  max_llm_calls: number;
+  max_cost_usd: number;
   experiment_variant: "full" | "single_agent" | "no_rag" | "no_review";
   status: string;
   steps: TaskStep[];
@@ -28,6 +32,7 @@ export type Task = {
   pr_number?: number | null;
   input_tokens: number;
   output_tokens: number;
+  llm_calls: number;
   estimated_cost_usd: number;
 };
 
@@ -45,6 +50,10 @@ export type CreateTaskInput = {
   source_commit?: string;
   test_command?: string;
   max_iterations?: number;
+  max_input_tokens?: number;
+  max_output_tokens?: number;
+  max_llm_calls?: number;
+  max_cost_usd?: number;
   experiment_variant?: "full" | "single_agent" | "no_rag" | "no_review";
 };
 
