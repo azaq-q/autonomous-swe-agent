@@ -56,6 +56,10 @@ def _create(client):
             "max_iterations": 2,
             "experiment_variant": "no_rag",
             "random_seed": 42,
+            "max_input_tokens": 12345,
+            "max_output_tokens": 678,
+            "max_llm_calls": 9,
+            "max_cost_usd": 0.75,
         },
     )
     assert response.status_code == 200
@@ -69,6 +73,11 @@ def test_create_get_and_filter_tasks(api):
     assert created["attempt"] == 0
     assert created["experiment_variant"] == "no_rag"
     assert created["random_seed"] == 42
+    assert created["max_input_tokens"] == 12345
+    assert created["max_output_tokens"] == 678
+    assert created["max_llm_calls"] == 9
+    assert created["max_cost_usd"] == 0.75
+    assert created["llm_calls"] == 0
 
     response = client.get(f"/api/v1/tasks/{created['task_id']}")
     assert response.status_code == 200

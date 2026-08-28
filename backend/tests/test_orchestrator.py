@@ -4,9 +4,10 @@ import pytest
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 from app.agents.orchestrator import Orchestrator
+from app.core.budget import LLMBudgetLimits
 from app.core.config import Settings
 from app.sandbox import CommandResult, get_sandbox, sandbox_scope
-from app.services.errors import TaskCancelledError
+from app.services.errors import TaskBudgetExceededError, TaskCancelledError
 from app.services.workspace import WorkspaceManager
 
 
@@ -90,6 +91,27 @@ def test_cooperative_cancellation_stops_before_agent_call():
     with pytest.raises(TaskCancelledError):
         orchestrator.run("task")
     assert planner.calls == 0
+
+
+def test_llm_call_budget_stops_before_next_agent_call():
+    planner = _Planner()
+    coding = _Coding()
+    orchestrator = _fake_orchestrator(
+        planner=planner,
+        coding=coding,
+        budget_limits=LLMBudgetLimits(
+            max_input_tokens=1_000,
+            max_output_tokens=1_000,
+            max_llm_calls=1,
+            max_cost_usd=1,
+        ),
+    )
+
+    with pytest.raises(TaskBudgetExceededError, match="llm_calls=1"):
+        orchestrator.run("task")
+
+    assert planner.calls == 1
+    assert coding.calls == 0
 
 
 def test_single_agent_variant_skips_planner_and_review(tmp_path):

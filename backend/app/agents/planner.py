@@ -2,6 +2,7 @@
 
 import json
 import re
+from typing import Any
 
 from langchain_core.language_models.chat_models import BaseChatModel
 
@@ -24,12 +25,13 @@ class PlannerAgent:
         self.llm = llm or get_llm()
         self.last_usage = {"input_tokens": 0, "output_tokens": 0}
 
-    def plan(self, task: str) -> list[str]:
+    def plan(self, task: str, callbacks: list[Any] | None = None) -> list[str]:
         messages = [
             ("system", PLANNER_PROMPT),
             ("user", task),
         ]
-        resp = self.llm.invoke(messages)
+        config = {"callbacks": callbacks} if callbacks else None
+        resp = self.llm.invoke(messages, config=config)
         self.last_usage = extract_usage(resp)
         return self._parse(resp.content)
 

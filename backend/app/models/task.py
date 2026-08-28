@@ -48,6 +48,10 @@ class Task(Base):
     source_commit: Mapped[str | None] = mapped_column(String(64), nullable=True)
     test_command: Mapped[str] = mapped_column(Text, default="pytest")
     max_iterations: Mapped[int] = mapped_column(Integer, default=3)
+    max_input_tokens: Mapped[int] = mapped_column(Integer, default=8_000_000)
+    max_output_tokens: Mapped[int] = mapped_column(Integer, default=250_000)
+    max_llm_calls: Mapped[int] = mapped_column(Integer, default=128)
+    max_cost_usd: Mapped[float] = mapped_column(Float, default=2.0)
     experiment_variant: Mapped[str] = mapped_column(String(32), default="full")
     random_seed: Mapped[int | None] = mapped_column(Integer, nullable=True)
     status: Mapped[str] = mapped_column(String(32), default=TaskStatus.PENDING.value)
@@ -68,6 +72,7 @@ class Task(Base):
     pr_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     input_tokens: Mapped[int] = mapped_column(Integer, default=0)
     output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    llm_calls: Mapped[int] = mapped_column(Integer, default=0)
     estimated_cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow

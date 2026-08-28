@@ -52,6 +52,12 @@ in-flight per-task budget. One task used more than 12 million input tokens befor
 the wall-clock timeout. The batch budget also excludes a timed-out task because
 its final token counters are not copied into the benchmark result.
 
+Follow-up status (2026-08-28): both gaps are fixed. Every provider request is
+now guarded by persisted per-task call, input-token, output-token, and estimated
+cost limits. Usage is committed after each completed request, including requests
+inside the Coding ReAct loop. Benchmark timeout results copy the live counters
+from the cancellation response, so their cost participates in the batch cap.
+
 ## Environment validation
 
 - model/provider: `deepseek-v4-flash` through `api.deepseek.com`;
@@ -87,5 +93,5 @@ the upstream harness uses the label as a directory and report filename.
 
 This is a pilot, not a headline benchmark. Five tasks and one seed have a wide
 confidence interval and cannot support a general model-quality claim. The next
-credible step is to fix in-flight token budgets and timeout accounting, then run
-the matched multi-seed protocol on a larger cohort.
+credible step is to run the matched multi-seed protocol on a larger cohort using
+the new per-task and batch budget guards.

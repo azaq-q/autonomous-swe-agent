@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     git_author_email: str = "agent@example.invalid"
     model_input_cost_per_million: float = 0.0
     model_output_cost_per_million: float = 0.0
+    task_max_input_tokens: int = 8_000_000
+    task_max_output_tokens: int = 250_000
+    task_max_llm_calls: int = 128
+    task_max_cost_usd: float = 2.0
 
     # Repository retrieval. `hashing` is the zero-download fallback; `fastembed`
     # runs a real local ONNX model; `openai` uses an OpenAI-compatible endpoint.

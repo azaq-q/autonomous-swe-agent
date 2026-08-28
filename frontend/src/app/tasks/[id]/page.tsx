@@ -73,8 +73,10 @@ export default function TaskTimeline() {
         执行尝试：{task.attempt} · 返工轮次：{task.revision}
       </p>
       <p className="mt-1 text-xs text-gray-400">
-        Token：{task.input_tokens} in / {task.output_tokens} out · 预估成本：$
-        {task.estimated_cost_usd.toFixed(4)}
+        调用：{task.llm_calls}/{task.max_llm_calls} · Token：
+        {task.input_tokens.toLocaleString()}/{task.max_input_tokens.toLocaleString()} in ·
+        {" "}{task.output_tokens.toLocaleString()}/{task.max_output_tokens.toLocaleString()} out
+        {" "}· 成本：${task.estimated_cost_usd.toFixed(4)}/${task.max_cost_usd.toFixed(2)}
       </p>
       {task.repository && <p className="mt-1 break-all text-sm text-gray-500">仓库：{task.repository}</p>}
       {task.base_commit && (

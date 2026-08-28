@@ -28,6 +28,10 @@ class TaskCreate(BaseModel):
     source_commit: str | None = Field(default=None, pattern=r"^[a-fA-F0-9]{40,64}$")
     test_command: str = Field(default="pytest", min_length=1, max_length=1_000)
     max_iterations: int = Field(default=3, ge=1, le=10)
+    max_input_tokens: int | None = Field(default=None, ge=1, le=100_000_000)
+    max_output_tokens: int | None = Field(default=None, ge=1, le=10_000_000)
+    max_llm_calls: int | None = Field(default=None, ge=1, le=10_000)
+    max_cost_usd: float | None = Field(default=None, gt=0, le=1_000)
     experiment_variant: ExperimentVariant = ExperimentVariant.FULL
     random_seed: int | None = Field(default=None, ge=0, le=2_147_483_647)
 
@@ -40,6 +44,10 @@ class TaskResponse(BaseModel):
     source_commit: str | None
     test_command: str
     max_iterations: int
+    max_input_tokens: int
+    max_output_tokens: int
+    max_llm_calls: int
+    max_cost_usd: float
     experiment_variant: str
     random_seed: int | None
     status: str
@@ -58,6 +66,7 @@ class TaskResponse(BaseModel):
     pr_number: int | None
     input_tokens: int
     output_tokens: int
+    llm_calls: int
     estimated_cost_usd: float
 
 
@@ -92,6 +101,10 @@ def _to_response(task: Task) -> TaskResponse:
         source_commit=task.source_commit,
         test_command=task.test_command,
         max_iterations=task.max_iterations,
+        max_input_tokens=task.max_input_tokens,
+        max_output_tokens=task.max_output_tokens,
+        max_llm_calls=task.max_llm_calls,
+        max_cost_usd=task.max_cost_usd,
         experiment_variant=task.experiment_variant,
         random_seed=task.random_seed,
         status=task.status,
@@ -112,12 +125,14 @@ def _to_response(task: Task) -> TaskResponse:
         pr_number=task.pr_number,
         input_tokens=task.input_tokens,
         output_tokens=task.output_tokens,
+        llm_calls=task.llm_calls,
         estimated_cost_usd=task.estimated_cost_usd,
     )
 
 
 @router.post("/tasks", response_model=TaskResponse)
 def create_task(req: TaskCreate, db: DbSession) -> TaskResponse:
+    settings = get_settings()
     task = Task(
         task_id=uuid.uuid4().hex[:12],
         prompt=req.prompt,
@@ -126,6 +141,10 @@ def create_task(req: TaskCreate, db: DbSession) -> TaskResponse:
         source_commit=req.source_commit.lower() if req.source_commit else None,
         test_command=req.test_command,
         max_iterations=req.max_iterations,
+        max_input_tokens=req.max_input_tokens or settings.task_max_input_tokens,
+        max_output_tokens=req.max_output_tokens or settings.task_max_output_tokens,
+        max_llm_calls=req.max_llm_calls or settings.task_max_llm_calls,
+        max_cost_usd=req.max_cost_usd or settings.task_max_cost_usd,
         experiment_variant=req.experiment_variant.value,
         random_seed=req.random_seed,
         status=TaskStatus.PENDING.value,
